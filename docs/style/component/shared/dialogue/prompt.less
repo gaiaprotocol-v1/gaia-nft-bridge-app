@@ -1,0 +1,46 @@
+.dialogue.prompt {
+    position        : relative;
+    max-width       : 600px;
+    width           : 90%;
+    margin          : auto;
+    background-color: black;
+    border          : 1px solid 177, 156, 118, 1;
+
+    >h6 {
+        font-size: 20px;
+        padding  : 16px 16px 0px 16px;
+    }
+
+    >p {
+        padding: 0px 16px 16px 16px;
+    }
+
+    >.input-container {
+        margin: 16px;
+
+        >input {
+            width     : 100%;
+            padding   : 8px;
+            border    : 1px solid 177, 156, 118, 1;
+            color     : white;
+            background: black;
+        }
+    }
+
+    >.button-container {
+        display        : flex;
+        justify-content: space-between;
+
+        >button {
+            width           : 100%;
+            background-color: 177, 156, 118, 1;
+            color           : black;
+            padding         : 8px 16px;
+
+            &:hover {
+                color           : black;
+                background-color: white;
+            }
+        }
+    }
+}

@@ -1,0 +1,64 @@
+.layout {
+    display        : flex;
+    flex-direction : column;
+    justify-content: center;
+    align-items    : center;
+    max-width      : 668px;
+    margin         : auto;
+    padding-bottom : 20px;
+
+    @media @phone {
+        padding: 20px;
+    }
+
+    >header {
+        width          : 100%;
+        display        : flex;
+        justify-content: space-between;
+        margin-top     : 15px;
+        margin-bottom  : 15px;
+
+        >h1 {
+            font-family: 'Trajan Pro Bold';
+            font-size  : 21px;
+            color      : #B19C76;
+        }
+    }
+
+    >main {
+        width: 100%;
+    }
+
+    >footer {
+        width          : 100%;
+        display        : flex;
+        justify-content: space-between;
+        margin-top     : 12px;
+
+        @media @phone {
+            flex-direction: column;
+        }
+
+        >.copyright {
+            font-size  : 14px;
+            line-height: 17px;
+            color      : #E0D8C8;
+        }
+
+        >.sns {
+            display: flex;
+            gap    : 18px;
+
+            @media @phone {
+                margin-top: 12px;
+            }
+
+            >a {
+                font-size           : 14px;
+                line-height         : 17px;
+                text-decoration-line: underline;
+                color               : #E0D8C8;
+            }
+        }
+    }
+}

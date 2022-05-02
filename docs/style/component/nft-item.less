@@ -1,0 +1,62 @@
+.nft-item {
+    display       : flex;
+    position      : relative;
+    flex-direction: column;
+    overflow      : hidden;
+    margin-bottom : 16px;
+
+    >img {
+        border-radius: 2px;
+        max-width    : 256px;
+        width        : 100%;
+        height       : auto;
+    }
+
+    >.checkbox-container {
+        display        : flex;
+        justify-content: center;
+        align-items    : center;
+        align-content  : center;
+        margin-top     : 4px;
+
+        input[type=checkbox] {
+            display: none;
+        }
+
+        >input[type=checkbox]+label {
+            display: block;
+            cursor : pointer;
+        }
+
+        input[type=checkbox]+label:before {
+            content       : "✓";
+            margin-bottom : 4px;
+            display       : inline-block;
+            width         : 16px;
+            height        : 16px;
+            border        : 2px solid #FFF;
+            border-radius : 2px;
+            margin-right  : 6px;
+            vertical-align: sub;
+            color         : transparent;
+            transition    : .2s;
+        }
+
+        input[type=checkbox]+label:active:before {
+            transform: scale(0);
+        }
+
+        input[type=checkbox]:checked+label:before {
+            background-color: #B19C76;
+            border-color    : #B19C76;
+            color           : #131313;
+        }
+
+        >p {
+            font-size  : 16px;
+            font-weight: 500;
+            color      : white;
+            text-shadow: 1px 1px 1px #656565;
+        }
+    }
+}
