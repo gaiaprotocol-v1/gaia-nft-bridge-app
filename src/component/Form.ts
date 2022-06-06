@@ -24,7 +24,8 @@ export default class Form extends DomNode {
         super("form")
         this.append(
             this.chainIcon = el("img", { src: "/images/shared/icn/klaytn.svg", alt: "chain image" }),
-            this.isFrom ? el("p", "FROM\n보내는 체인") : el("p", "TO\n받는체인"),
+            this.isFrom ? el(".caption-container", el("span", "from"), el("p", "보내는 체인")) :
+                el(".caption-container", el("span", "to"), el("p", "받는 체인")),
             this.chainSelect = el("select",
                 el("option", "Klaytn", { value: "8217" }),
                 el("option", "Ethereum", { value: "1" }),
@@ -57,7 +58,7 @@ export default class Form extends DomNode {
         this.sender?.off("SendToken", this.sendHandler);
 
         if (chainId === 8217) {
-            this.chainIcon.domElement.src = "/images/shared/icn/klaytn.svg";
+            this.chainIcon.domElement.src = "/images/shared/icn/klaytn.png";
 
             const address = await KlaytnWallet.loadAddress();
             if (address !== undefined) {
@@ -66,7 +67,7 @@ export default class Form extends DomNode {
                 this.addressDisplay.empty();
             }
         } else if (chainId === 1) {
-            this.chainIcon.domElement.src = "/images/shared/icn/ethereum.svg";
+            this.chainIcon.domElement.src = "/images/shared/icn/ethereum.png";
 
             const address = await EthereumWallet.loadAddress();
             if (address !== undefined) {

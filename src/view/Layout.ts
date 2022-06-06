@@ -12,9 +12,6 @@ export default class Layout implements View {
         Layout.current = this;
         BodyNode.append(
             (this.container = el(".layout",
-                el("header",
-                    el("h1", "Gaia Bridge"),
-                ),
                 el("main", (this.content = el(".content"))),
                 el("footer",
                     el(".copyright", "ⓒ Gaia Protocol."),

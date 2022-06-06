@@ -180,8 +180,14 @@ input {
   font-weight: normal;
   src: local('Trajan Pro Bold'), url('fonts/TrajanPro-Bold.woff') format('woff');
 }
+@font-face {
+  font-family: 'Noto Sans Kr';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Noto Sans Kr'), url('fonts/Noto-Sans-Kr-Regular.woff2') format('woff2');
+}
 body {
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-family: "Noto Sans Kr";
   background: linear-gradient(#111112, #2a292a) fixed;
   margin: auto;
   color: #FFF;
@@ -409,9 +415,23 @@ body {
   flex-direction: column;
   justify-content: space-around;
   width: 100%;
-  background: #000;
-  border-radius: 4px;
-  padding: 60px;
+  background: #17171B;
+  border-radius: 8px;
+  padding: 32px;
+}
+.swaper > .swap-container > header {
+  border-left: 2px solid #cdad6a;
+  padding-left: 8px;
+  margin-bottom: 32px;
+}
+.swaper > .swap-container > header > h1 {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.swaper > .swap-container > header > p {
+  color: #949494;
+  font-size: 14px;
+  padding-left: 4px;
 }
 .swaper > .swap-container > .form-container {
   display: flex;
@@ -423,30 +443,34 @@ body {
   align-items: center;
 }
 .swaper > .swap-container > .form-container > form > img {
-  width: 52px;
-  height: 52px;
+  width: 86px;
+  height: 86px;
   margin-bottom: 8px;
 }
 .swaper > .swap-container > .form-container > form > select {
   max-width: 138px;
   width: 100%;
-  margin-top: 8px;
-  margin-bottom: 12px;
-  background: #353535;
+  margin: 12px 0px;
+  background: #2a2b32;
   color: #FFF;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 2px;
-  padding: 6px 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 8px 12px;
   border: none;
 }
-.swaper > .swap-container > .form-container > form > p {
-  font-style: normal;
-  font-weight: normal;
+.swaper > .swap-container > .form-container > form > .caption-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.swaper > .swap-container > .form-container > form > .caption-container > span {
   font-size: 14px;
-  line-height: 21px;
-  color: #FFFFFF;
-  margin-bottom: 4px;
+  color: #949494;
+  margin: 4px 0px;
   text-align: center;
+}
+.swaper > .swap-container > .form-container > form > .caption-container > p {
+  font-size: 16px;
 }
 .swaper > .swap-container > .form-container > form > .address-container {
   display: flex;
@@ -456,9 +480,9 @@ body {
   font-style: normal;
   font-weight: normal;
   font-size: 14px;
-  line-height: 17px;
   color: #FFFFFF;
   margin-bottom: 4px;
+  margin-right: 8px;
   text-align: center;
 }
 .swaper > .swap-container > .form-container > form > .address-container > a > img {
@@ -536,6 +560,7 @@ body {
 .swaper > .swap-container > .amount-container > .title-container > .title {
   font-weight: bold;
   padding-bottom: 8px;
+  font-size: 20px;
 }
 .swaper > .swap-container > .amount-container > .tab-container {
   display: flex;
@@ -543,29 +568,39 @@ body {
   margin-top: 8px;
 }
 .swaper > .swap-container > .amount-container > .tab-container > a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #25262c;
+  width: 30%;
+  height: 40px;
+  border-radius: 14px;
   font-weight: bold;
-  font-size: 14px;
 }
-.swaper > .swap-container > .amount-container > .tab-container > .kronos {
+.swaper > .swap-container > .amount-container > .tab-container > .genesis {
   color: #B19C76;
   padding-bottom: 4px;
 }
-.swaper > .swap-container > .amount-container > .tab-container > .kronos:hover {
-  border-bottom: solid 3px #B19C76;
+.swaper > .swap-container > .amount-container > .tab-container > .genesis:hover {
+  color: #fff;
+  background-color: #B19C76;
 }
 .swaper > .swap-container > .amount-container > .tab-container > .supernova {
   color: #990013;
   padding-bottom: 4px;
 }
 .swaper > .swap-container > .amount-container > .tab-container > .supernova:hover {
-  border-bottom: solid 3px #990013;
+  color: #fff;
+  background-color: #990013;
 }
 .swaper > .swap-container > .amount-container > .tab-container > .stable {
   color: #00445A;
   padding-bottom: 4px;
 }
 .swaper > .swap-container > .amount-container > .tab-container > .stable:hover {
-  border-bottom: solid 3px #00445A;
+  color: #fff;
+  background-color: #00445A;
 }
 .swaper > .swap-container > .amount-container > .nft-container {
   display: grid;
@@ -573,8 +608,8 @@ body {
   grid-gap: 8px;
   margin-top: 8px;
   padding: 8px;
-  border: solid 0.5px #E0D8C8;
-  border-radius: 2px;
+  border: solid 2px #cdad6a;
+  border-radius: 8px;
   max-height: 300px;
   overflow: scroll;
 }
@@ -605,23 +640,29 @@ body {
 .swaper > .swap-container > .fee-container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 24px;
+  background: #2a2b32;
+  border-radius: 8px;
+  height: 48px;
+  padding: 0px 12px;
 }
 .swaper > .swap-container > .fee-container > .text-container {
   display: flex;
   align-items: baseline;
 }
 .swaper > .swap-container > .fee-container > .text-container > .title {
+  font-size: 20px;
   font-weight: bold;
-  padding-bottom: 8px;
   margin-right: 4px;
 }
 .swaper > .swap-container > .fee-container > .text-container > .caption {
   font-size: 12px;
   color: #B19C76;
+  padding-left: 4px;
 }
 .swaper > .swap-container > .fee-container > .text-container > .amount {
-  font-size: 14px;
+  font-size: 20px;
   color: #B19C76;
   margin-right: 8px;
 }
@@ -632,18 +673,23 @@ body {
 .swaper > .swap-container > .received-container {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 24px;
+  background: #2a2b32;
+  border-radius: 8px;
+  height: 48px;
+  padding: 0px 12px;
 }
 .swaper > .swap-container > .received-container > .text-container {
   display: flex;
 }
 .swaper > .swap-container > .received-container > .text-container > .title {
+  font-size: 20px;
   font-weight: bold;
-  padding-bottom: 8px;
   margin-right: 4px;
 }
 .swaper > .swap-container > .received-container > .text-container > .amount {
-  font-size: 14px;
+  font-size: 20px;
   color: #B19C76;
   margin-right: 8px;
 }
@@ -657,17 +703,15 @@ body {
   margin-top: 12px;
 }
 .swaper > .swap-container > .warning-container > .content {
-  max-width: 392px;
   width: 100%;
   padding: 11px;
   display: flex;
-  background: #353535;
   border-radius: 4px;
   justify-content: center;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 14px;
-  color: #FFFFFF;
+  color: #949494;
 }
 .swaper > .swap-container > .warning-container > .content > p {
   text-align: left;
@@ -682,26 +726,25 @@ body {
 .swaper > .swap-container > .button-container > .content {
   display: flex;
   width: 100%;
-  max-width: 392px;
-  gap: 32px;
+  gap: 20px;
 }
 .swaper > .swap-container > .button-container > .content > button {
-  background: #B19C76;
-  border-radius: 2px;
+  background: #fa4364;
+  background: linear-gradient(90deg, #fa4364 0%, #faa92e 100%);
+  border-radius: 8px;
   color: #FFFFFF;
-  font-size: 14px;
   padding: 10px;
   width: 100%;
 }
 .swaper > .swap-container > .button-container > .content > button:disabled {
-  background: #C8C8C8;
-  color: #E0E0E0;
+  background: #2e2e47;
+  background: linear-gradient(90deg, #2e2e47 0%, #403649 100%);
 }
 .swaper > .history-container {
   margin-top: 24px;
   width: 100%;
-  background: #000;
-  border-radius: 4px;
+  background: #17171B;
+  border-radius: 8px;
   padding: 32px;
 }
 .swaper > .history-container > .title {
@@ -777,21 +820,27 @@ body {
   display: flex;
   position: relative;
   flex-direction: column;
+  align-items: center;
   overflow: hidden;
   margin-bottom: 16px;
 }
 .nft-item > img {
-  border-radius: 2px;
+  border-radius: 8px;
   max-width: 256px;
   width: 100%;
   height: auto;
 }
 .nft-item > .checkbox-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   align-content: center;
   margin-top: 4px;
+  max-width: 100px;
+  width: 100%;
+  height: 30px;
+  border-radius: 16px;
+  background-color: #25262c;
 }
 .nft-item > .checkbox-container input[type=checkbox] {
   display: none;
@@ -822,10 +871,9 @@ body {
   color: #131313;
 }
 .nft-item > .checkbox-container > p {
-  font-size: 16px;
   font-weight: 500;
   color: white;
-  text-shadow: 1px 1px 1px #656565;
+  padding-left: 8px;
 }
 .layout {
   display: flex;
@@ -835,6 +883,8 @@ body {
   max-width: 668px;
   margin: auto;
   padding-bottom: 20px;
+  width: 100%;
+  height: 100vh;
 }
 @media only screen and (max-width: 719px) {
   .layout {
@@ -854,6 +904,9 @@ body {
   color: #B19C76;
 }
 .layout > main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
 }
 .layout > footer {
@@ -884,7 +937,7 @@ body {
 .layout > footer > .sns > a {
   font-size: 14px;
   line-height: 17px;
-  text-decoration-line: underline;
+  text-decoration-line: none;
   color: #E0D8C8;
 }
 
