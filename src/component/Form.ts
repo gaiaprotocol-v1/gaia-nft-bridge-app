@@ -1,24 +1,27 @@
-import { BigNumber, utils } from "ethers";
+import { BigNumber } from "ethers";
 import { DomNode, el } from "skydapp-browser";
 import CommonUtil from "../CommonUtil";
-import GaiaBridgeInterface from "../contract/GaiaBridgeInterface";
+import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
+import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
+import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
 import Swaper from "./Swaper";
 
 export default class Form extends DomNode {
-    public sender: GaiaBridgeInterface | undefined;
+    public sender: GaiaNFTBridgeInterface | undefined;
 
     private chainIcon: DomNode<HTMLImageElement>;
     private chainSelect: DomNode<HTMLSelectElement>;
-    private balanceDisplay: DomNode;
     private addressDisplay: DomNode;
-    private disconnectButton: DomNode;
+    //private disconnectButton: DomNode;
     private buttonContainer: DomNode;
 
     constructor(
         private swaper: Swaper,
         public chainId: number,
+        private nftName: string,
+        private nftAddress: string,
         private isFrom: boolean = false
     ) {
         super("form")
@@ -29,6 +32,7 @@ export default class Form extends DomNode {
             this.chainSelect = el("select",
                 el("option", "Klaytn", { value: "8217" }),
                 el("option", "Ethereum", { value: "1" }),
+                //el("option", "Polygon", { value: "137" }),
                 {
                     change: () => {
                         const originChainId = this.chainId;
@@ -37,12 +41,11 @@ export default class Form extends DomNode {
                     },
                 }
             ),
-            (this.balanceDisplay = el("p")),
             el(".address-container",
                 (this.addressDisplay = el("p")),
-                (this.disconnectButton = el("a.disconnect",
+                /*(this.disconnectButton = el("a.disconnect",
                     el("img", { src: "/images/shared/icn/disconnect.svg" })
-                )),
+                )),*/
             ),
             (this.buttonContainer = el(".button-container")),
         );
@@ -58,6 +61,7 @@ export default class Form extends DomNode {
         this.sender?.off("SendToken", this.sendHandler);
 
         if (chainId === 8217) {
+            this.sender = KlaytnGaiaNFTBridgeContract;
             this.chainIcon.domElement.src = "/images/shared/icn/klaytn.png";
 
             const address = await KlaytnWallet.loadAddress();
@@ -67,6 +71,7 @@ export default class Form extends DomNode {
                 this.addressDisplay.empty();
             }
         } else if (chainId === 1) {
+            this.sender = EthereumGaiaNFTBridgeContract;
             this.chainIcon.domElement.src = "/images/shared/icn/ethereum.png";
 
             const address = await EthereumWallet.loadAddress();
@@ -89,20 +94,20 @@ export default class Form extends DomNode {
         if (this.sender !== undefined) {
             const owner = await this.sender.loadAddress();
             if (owner !== undefined) {
-                const balance = await this.sender.balanceOf(owner);
-                this.balanceDisplay
-                    .empty()
-                    .appendText(`${utils.formatUnits(balance)} NFT`);
-                this.buttonContainer.append(
-                    el("a.add-token-to-wallet-button", "지갑에 토큰 추가하기", {
-                        click: () => {
-                            this.sender?.addTokenToWallet();
-                        },
-                    }),
-                );
+                //this.disconnectButton.empty().append(el("img", { src: "/images/shared/icn/disconnect.svg" }));
+                this.addressDisplay.empty().appendText(CommonUtil.shortenAddress(owner));
+
+                if (this.isFrom === true) {
+                    if (this.chainId === 8217) {
+                        const result = await fetch(`https://nft-holder-collector.webplusone.com/nfts/klaytn/${this.nftAddress}/${owner}`);
+                        this.fireEvent("load", await result.json());
+                    } else if (this.chainId === 1) {
+                        //TODO:
+                    }
+                }
+
             } else {
-                this.disconnectButton.empty();
-                this.balanceDisplay.empty().appendText("잔액 불러오기 실패");
+                //this.disconnectButton.empty();
                 this.buttonContainer.append(
                     el("a.connect-button", "지갑 연결", {
                         click: () => this.sender?.connect(),

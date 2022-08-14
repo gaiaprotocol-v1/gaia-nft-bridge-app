@@ -4,10 +4,10 @@ export default class NftItem extends DomNode {
 
     private checkbox: DomNode<HTMLInputElement>;
 
-    constructor(public id: number) {
+    constructor(name: string, public id: number) {
         super(".nft-item");
         this.append(
-            el("img", { src: `https://storage.googleapis.com/gaia-protocol/stabledao/${id}.png`, alt: `nft${id}` }),
+            el("img", { src: `https://storage.googleapis.com/gaia-protocol/${name === "genesis" ? "kronos" : name}/${id}.png`, alt: `nft${id}` }),
             el(".checkbox-container",
                 this.checkbox = el("input", { type: "checkbox", id: `nft${id}` }, {
                     change: () => {

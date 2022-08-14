@@ -1,7 +1,6 @@
 
 import { BigNumber, BigNumberish } from "ethers";
 import { DomNode, el } from "skydapp-browser";
-import SkyUtil from "skyutil";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import Form from "./Form";
 import NftItem from "./NftItem";
@@ -11,10 +10,10 @@ export default class Swaper extends DomNode {
     private fromForm: Form;
     private toForm: Form;
 
-    private feeDisplay: DomNode;
+    //private feeDisplay: DomNode;
     private sendedList: DomNode;
     private nftList: DomNode;
-    private receivedDisplay: DomNode;
+    //private receivedDisplay: DomNode;
     private approveButton: DomNode<HTMLButtonElement>;
 
     constructor() {
@@ -27,7 +26,7 @@ export default class Swaper extends DomNode {
                     el("p", "NFT SWAP")
                 ),
                 el(".form-container",
-                    (this.fromForm = new Form(this, 8217, true)),
+                    (this.fromForm = new Form(this, 8217, "GENESIS", "0xe9A10bB97DDb4bCD7677393405B4b769273CeF3c", true)),
                     el("a", {
                         click: () => {
                             // TODO: 누를 시 FROM<->TO 변환
@@ -35,7 +34,7 @@ export default class Swaper extends DomNode {
                     },
                         el("img.arrow", { src: "/images/shared/icn/arrow-right.svg", height: "50", alt: "arrow-right" })
                     ),
-                    (this.toForm = new Form(this, 1))
+                    (this.toForm = new Form(this, 1, "GENESIS", "0xb48E526d935BEe3891222f6aC10A253e31CCaBE1"))
                 ),
                 el(".amount-container",
                     el(".title-container",
@@ -46,9 +45,9 @@ export default class Swaper extends DomNode {
                         el("a.supernova", "Super nova"),
                         el("a.stable", "Stable DAO"),
                     ),
-                    this.nftList = el(".nft-container", new NftItem(170)),
+                    this.nftList = el(".nft-container"),
                 ),
-                el(".fee-container",
+                /*el(".fee-container",
                     el(".text-container",
                         el(".title", "Fees"),
                         el(".caption", "0.3% (Charged by Gaia Protocol)"),
@@ -66,7 +65,7 @@ export default class Swaper extends DomNode {
                         this.receivedDisplay = el(".amount", this.numberWithCommas("0", 3)),
                         el(".amount-caption", ""),
                     )
-                ),
+                ),*/
                 el(".warning-container",
                     el(".content",
                         el("img", { src: "/images/shared/icn/warning.png", alt: "warning.svg" }),
@@ -120,6 +119,13 @@ export default class Swaper extends DomNode {
             this.loadHistory();
         });
 
+        this.fromForm.on("load", (nfts: any) => {
+            this.nftList.empty();
+            for (const nft of nfts) {
+                this.nftList.append(new NftItem("genesis", nft.tokenId));
+            }
+        });
+
         this.loadHistory();
         this.fromForm.on("connect", () => this.loadHistory());
         this.toForm.on("connect", () => this.loadHistory());
@@ -139,7 +145,7 @@ export default class Swaper extends DomNode {
 
     private async loadHistory() {
         const owner = await this.fromForm.sender!.loadAddress();
-        const balance = await this.fromForm.sender!.balanceOf(owner!);
+        //const balance = await this.fromForm.sender!.balanceOf(owner!);
 
         if (
             this.fromForm.sender !== undefined &&
@@ -148,7 +154,7 @@ export default class Swaper extends DomNode {
             const sender = await this.fromForm.sender.loadAddress();
             const receiver = await this.toForm.sender.loadAddress();
             if (sender !== undefined && receiver !== undefined) {
-                const count = await this.fromForm.sender.sendingCounts(
+                /*const count = await this.fromForm.sender.sendingCounts(
                     sender,
                     this.toForm.chainId,
                     receiver,
@@ -160,7 +166,7 @@ export default class Swaper extends DomNode {
                     if (this.loadHistoryNonce === nonce) {
                         this.addSended(sender, receiver, BigNumber.from(sendingId));
                     }
-                });
+                });*/
             }
         }
     }
@@ -180,7 +186,7 @@ export default class Swaper extends DomNode {
                 sendingId.toNumber(),
                 async () => {
                     if (this.fromForm.sender !== undefined) {
-                        const sended = await this.fromForm.sender.sendedAmounts(
+                        /*const sended = await this.fromForm.sender.sendedAmounts(
                             sender,
                             this.toForm.chainId,
                             receiver,
@@ -192,24 +198,26 @@ export default class Swaper extends DomNode {
                             receiver,
                             sendingId,
                             sended,
-                        );
+                        );*/
                     }
                 }
             ).appendTo(this.sendedList, 0);
         }
     }
 
-    public async send(amount: BigNumberish) {
+    public async send(nftName: string, nftAddress: string, ids: BigNumberish[]) {
         if (
             this.fromForm.sender !== undefined &&
             this.toForm.sender !== undefined
         ) {
             const receiver = await this.toForm.sender.loadAddress();
             if (receiver !== undefined) {
-                await this.fromForm.sender.sendToken(
+                await this.fromForm.sender.sendNFTs(
                     this.toForm.chainId,
                     receiver,
-                    amount
+                    nftName,
+                    nftAddress,
+                    ids,
                 );
             }
         }

@@ -14,11 +14,11 @@ export default class Layout implements View {
             (this.container = el(".layout",
                 el("main", (this.content = el(".content"))),
                 el("footer",
-                    el(".copyright", "ⓒ Gaia Protocol."),
+                    el(".copyright", "ⓒ Gaia Protocol"),
                     el(".sns",
                         el("a.item", "Gaia Discord",
                             {
-                                href: "https://discord.gg/gaia",
+                                href: "https://discord.gg/gaiaprotocol",
                                 target: "_blank",
                             }
                         ),

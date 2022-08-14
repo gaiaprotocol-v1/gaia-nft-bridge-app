@@ -1,5 +1,5 @@
 import { BigNumber, utils } from "ethers";
-import GaiaBridgeInterface from "../contract/GaiaBridgeInterface";
+import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 import { DomNode, el } from "skydapp-browser";
 
 export default class Sended extends DomNode {
@@ -11,8 +11,8 @@ export default class Sended extends DomNode {
     private toChainText: DomNode<HTMLImageElement> | undefined;
 
     constructor(
-        private fromSender: GaiaBridgeInterface,
-        private toSender: GaiaBridgeInterface,
+        private fromSender: GaiaNFTBridgeInterface,
+        private toSender: GaiaNFTBridgeInterface,
 
         private fromChainId: number,
         private toChainId: number,
@@ -30,7 +30,7 @@ export default class Sended extends DomNode {
     }
 
     private async load() {
-        const sended = await this.fromSender.sendedAmounts(this.sender, this.toChainId, this.receiver, this.sendingId);
+        /*const sended = await this.fromSender.sendedAmounts(this.sender, this.toChainId, this.receiver, this.sendingId);
         const received = await this.toSender.isTokenReceived(this.sender, this.fromChainId, this.receiver, this.sendingId);
 
         this.empty().append(
@@ -65,7 +65,7 @@ export default class Sended extends DomNode {
                 ),
             ),
         );
-        this.loadChain();
+        this.loadChain();*/
     }
 
     private async loadChain(): Promise<void> {

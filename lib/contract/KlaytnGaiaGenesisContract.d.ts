@@ -1,0 +1,1 @@
+//# sourceMappingURL=KlaytnGaiaGenesisContract.d.ts.map
