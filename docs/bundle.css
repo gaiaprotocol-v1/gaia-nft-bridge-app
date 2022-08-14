@@ -327,12 +327,14 @@ body {
   border: 1px solid #b19c76;
 }
 .dialogue.alert > h6 {
-  font-size: 18px;
+  font-size: 21px;
   padding: 16px;
   padding-bottom: 0px;
 }
 .dialogue.alert > p {
+  font-size: 14px;
   padding: 16px;
+  line-height: 1.5rem;
 }
 .dialogue.alert > .button-container {
   display: flex;
@@ -357,12 +359,14 @@ body {
   border: 1px solid #b19c76;
 }
 .dialogue.confirm > h6 {
-  font-size: 18px;
+  font-size: 21px;
   padding: 16px;
   padding-bottom: 0px;
 }
 .dialogue.confirm > p {
+  font-size: 14px;
   padding: 16px;
+  line-height: 1.5rem;
 }
 .dialogue.confirm > .button-container {
   display: flex;
