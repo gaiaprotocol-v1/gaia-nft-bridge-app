@@ -12,6 +12,7 @@ import Form from "./Form";
 import NftItem from "./NftItem";
 import Sended from "./Sended";
 import Alert from "./shared/dialogue/Alert";
+import Confirm from "./shared/dialogue/Confirm";
 
 export default class Swaper extends DomNode {
     private fromForm: Form;
@@ -134,16 +135,18 @@ export default class Swaper extends DomNode {
                         }),
                         this.transferButton = el("button", "Transfer\n전송하기", {
                             click: () => {
-                                if (this.selectedIds.length === 0) {
-                                    new Alert("오류", "선택된 NFT가 없습니다.");
-                                } else {
-                                    const nftName = this.store.get<string>("nft") ?? "GENESIS";
-                                    this.send(
-                                        nftName,
-                                        this.fromForm.nftContract.address,
-                                        this.selectedIds,
-                                    );
-                                }
+                                new Confirm("주의사항", "반드시 전송하기 전에 양쪽 체인에 가스비가 충분한지 확인하세요. 가스비가 충분하지 않으면 정상적으로 진행되지 않습니다. 가스비를 충전하고 이용해주시기 바랍니다.", "확인했습니다.", () => {
+                                    if (this.selectedIds.length === 0) {
+                                        new Alert("오류", "선택된 NFT가 없습니다.");
+                                    } else {
+                                        const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                                        this.send(
+                                            nftName,
+                                            this.fromForm.nftContract.address,
+                                            this.selectedIds,
+                                        );
+                                    }
+                                });
                             },
                         }),
                     ),
