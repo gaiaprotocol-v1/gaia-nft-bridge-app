@@ -1,5 +1,6 @@
-import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
+import { BigNumber } from "ethers";
 import { DomNode } from "skydapp-browser";
+import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 export default class Sended extends DomNode {
     private fromSender;
     private toSender;
@@ -8,12 +9,13 @@ export default class Sended extends DomNode {
     private sender;
     private receiver;
     private sendingId;
+    private ids;
     private retry;
     private fromImage;
     private toImage;
     private fromChainText;
     private toChainText;
-    constructor(fromSender: GaiaNFTBridgeInterface, toSender: GaiaNFTBridgeInterface, fromChainId: number, toChainId: number, sender: string, receiver: string, sendingId: number, retry: () => void);
+    constructor(fromSender: GaiaNFTBridgeInterface, toSender: GaiaNFTBridgeInterface, fromChainId: number, toChainId: number, sender: string, receiver: string, sendingId: number, ids: BigNumber[], retry: () => void);
     private load;
     private loadChain;
     private getFormatting;

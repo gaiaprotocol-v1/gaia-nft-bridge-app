@@ -1,4 +1,4 @@
-import { BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import EthereumContract from "./EthereumContract";
 import GaiaNFTBridgeInterface from "./GaiaNFTBridgeInterface";
 declare class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements GaiaNFTBridgeInterface {
@@ -6,6 +6,11 @@ declare class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implem
     loadAddress(): Promise<string | undefined>;
     connect(): Promise<void>;
     sendNFTs(toChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[]): Promise<void>;
+    receiveNFTs(sender: string, fromChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[], sendingId: BigNumberish, sig: string): Promise<void>;
+    loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{
+        sendingId: BigNumber;
+        ids: BigNumber[];
+    }[]>;
 }
 declare const _default: EthereumGaiaNFTBridgeContract;
 export default _default;

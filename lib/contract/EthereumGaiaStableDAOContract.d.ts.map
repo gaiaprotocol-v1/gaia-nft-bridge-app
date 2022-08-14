@@ -1,1 +1,1 @@
-{"version":3,"file":"EthereumGaiaStableDAOContract.d.ts","sourceRoot":"","sources":["../../src/contract/EthereumGaiaStableDAOContract.ts"],"names":[],"mappings":""}
+{"version":3,"file":"EthereumGaiaStableDAOContract.d.ts","sourceRoot":"","sources":["../../src/contract/EthereumGaiaStableDAOContract.ts"],"names":[],"mappings":"AACA,OAAO,cAAc,MAAM,oCAAoC,CAAC;AAEhE,cAAM,6BAA8B,SAAQ,cAAc,CAAC,GAAG,CAAC;;CAK9D;;AAED,wBAAmD"}

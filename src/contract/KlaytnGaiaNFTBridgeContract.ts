@@ -22,7 +22,6 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
             const currentBlock = await Klaytn.loadBlockNumber();
             const sendEvents = await this.getSendNFTsEvents(prevBlock, currentBlock);
             for (const event of sendEvents) {
-                console.log(event.returnValues[5]);
                 this.fireEvent("SendNFTs", event.returnValues[0], BigNumber.from(event.returnValues[1]), event.returnValues[2], event.returnValues[3], event.returnValues[4], event.returnValues[5], event.returnValues[6]);
             }
             const receiveTokenEvents = await this.getReceiveNFTsEvents(prevBlock, currentBlock);
@@ -59,6 +58,33 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
 
     public async sendNFTs(toChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[]) {
         await this.runWalletMethod("sendNFTs", toChain, receiver, nftName, nftAddress, ids);
+    }
+
+    public async receiveNFTs(sender: string, fromChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[], sendingId: BigNumberish, sig: string) {
+        await this.runWalletMethod("receiveNFTs", sender, fromChain, receiver, nftName, nftAddress, ids, sendingId, sig);
+    }
+
+    public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ sendingId: BigNumber, ids: BigNumber[] }[]> {
+        const currentBlock = await Klaytn.loadBlockNumber();
+        const events = await this.contract.getPastEvents("SendNFTs", {
+            filter: { sender, toChainId, receiver },
+            fromBlock: currentBlock - 5000,
+            toBlock: currentBlock,
+        });
+        const results: { sendingId: BigNumber, ids: BigNumber[] }[] = [];
+        for (const event of events) {
+            if (
+                event.returnValues[3] === nftName &&
+                event.returnValues[4] === nftAddress
+            ) {
+                const ids: BigNumber[] = [];
+                for (const id of event.returnValues[5]) {
+                    ids.push(BigNumber.from(id));
+                }
+                results.push({ sendingId: BigNumber.from(event.returnValues[6]), ids });
+            }
+        }
+        return results;
     }
 }
 

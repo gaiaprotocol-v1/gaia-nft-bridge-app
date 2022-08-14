@@ -1,6 +1,6 @@
 import { BigNumber, utils } from "ethers";
-import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 import { DomNode, el } from "skydapp-browser";
+import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 
 export default class Sended extends DomNode {
 
@@ -21,51 +21,50 @@ export default class Sended extends DomNode {
         private receiver: string,
 
         private sendingId: number,
+        private ids: BigNumber[],
 
         private retry: () => void,
     ) {
-        super("tbody");
+        super("tr");
         this.load();
-        this.toSender.on("ReceiveToken", this.receiveTokenHandler);
+        //this.toSender.on("ReceiveToken", this.receiveTokenHandler);
     }
 
     private async load() {
-        /*const sended = await this.fromSender.sendedAmounts(this.sender, this.toChainId, this.receiver, this.sendingId);
-        const received = await this.toSender.isTokenReceived(this.sender, this.fromChainId, this.receiver, this.sendingId);
+        //const received = await this.toSender.isTokenReceived(this.sender, this.fromChainId, this.receiver, this.sendingId);
+        const received: boolean = false;
 
         this.empty().append(
-            el("tr",
-                el("td",
-                    el(".chain-container",
-                        this.fromImage = el("img", { src: "/images/shared/icn/ethereum.svg", alt: "ethereum" }),
-                        this.fromChainText = el("p", `${console.log(this.fromSender)}`),
-                    ),
+            el("td",
+                el(".chain-container",
+                    this.fromImage = el("img", { src: "/images/shared/icn/ethereum.svg", alt: "ethereum" }),
+                    this.fromChainText = el("p", `${console.log(this.fromSender)}`),
+                ),
 
-                ),
-                el("td",
-                    el(".chain-container",
-                        this.toImage = el("img", { src: "/images/shared/icn/klaytn.svg", alt: "klaytn" }),
-                        this.toChainText = el("p", "Klaytn"),
-                    ),
-                ),
-                el("td",
-                    el("p", `${await this.getFormatting(sended)}`),
-                ),
-                el("td",
-                    el("p", `${Number(await this.getFormatting(sended)) * 0.3 / 100}`),
-                ),
-                el("td",
-                    el("p", "00:00"),
-                ),
-                el("td",
-                    received === true ? el("button", "Done") : el("button", "Retry", {
-                        // "disabled": "",
-                        click: () => this.retry(),
-                    }),
+            ),
+            el("td",
+                el(".chain-container",
+                    this.toImage = el("img", { src: "/images/shared/icn/klaytn.svg", alt: "klaytn" }),
+                    this.toChainText = el("p", "Klaytn"),
                 ),
             ),
+            el("td",
+                el("p", ""),
+            ),
+            el("td",
+                el("p", ""),
+            ),
+            el("td",
+                el("p", "00:00"),
+            ),
+            el("td",
+                (received as any) === true ? el("button", "Done") : el("button", "Retry", {
+                    // "disabled": "",
+                    click: () => this.retry(),
+                }),
+            ),
         );
-        this.loadChain();*/
+        this.loadChain();
     }
 
     private async loadChain(): Promise<void> {

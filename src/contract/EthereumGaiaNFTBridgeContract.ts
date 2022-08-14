@@ -1,6 +1,5 @@
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
-import { constants } from "ethers";
-import Config from "../Config";
+import EthereumNetworkProvider from "../ethereum/EthereumNetworkProvider";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import GaiaNFTBridgeArtifact from "./abi/gaia-protocol-pfp-bridge/artifacts/contracts/GaiaNFTBridge.sol/GaiaNFTBridge.json";
 //import APMCoinContract from "./APMCoinContract";
@@ -37,6 +36,27 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
             //    await contract?.sendToken(toChain, receiver, amount, data);
             //}
         }
+    }
+
+    public async receiveNFTs(sender: string, fromChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[], sendingId: BigNumberish, sig: string) {
+        const contract = await this.connectAndGetWalletContract();
+        await contract?.receiveNFTs(sender, fromChain, receiver, nftName, nftAddress, ids, sendingId, sig);
+    }
+
+    public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ sendingId: BigNumber, ids: BigNumber[] }[]> {
+        const filter = this.contract.filters.SendNFTs(sender, toChainId, receiver);
+        const currentBlock = await EthereumNetworkProvider.getBlockNumber();
+        const events = await this.contract.queryFilter(filter, currentBlock - 5000, currentBlock);
+        const results: { sendingId: BigNumber, ids: BigNumber[] }[] = [];
+        for (const event of events) {
+            if (
+                event.args.nftName === nftName &&
+                event.args.nftAddress === nftAddress
+            ) {
+                results.push({ sendingId: event.args.sendingId, ids: event.args.ids });
+            }
+        }
+        return results;
     }
 }
 

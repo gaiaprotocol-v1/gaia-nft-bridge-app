@@ -2,7 +2,12 @@
 import { BigNumber, BigNumberish } from "ethers";
 import { DomNode, el, Store } from "skydapp-browser";
 import { SkyUtil } from "skydapp-common";
+import Config from "../Config";
+import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
+import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
+import Contracts from "../Contracts";
 import EthereumWallet from "../ethereum/EthereumWallet";
+import KlaytnWallet from "../klaytn/KlaytnWallet";
 import Form from "./Form";
 import NftItem from "./NftItem";
 import Sended from "./Sended";
@@ -113,12 +118,27 @@ export default class Swaper extends DomNode {
                 el(".button-container",
                     el(".content",
                         this.approveButton = el("button", "Approve\nNFT 사용 허가", {
-                            "disabled": "",
                             click: async () => {
+                                const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                                const fromChainId = this.fromForm.chainId;
+                                const contract = Contracts[fromChainId][nftName];
+                                if (fromChainId === 1) {
+                                    contract.setApprovalForAll(EthereumGaiaNFTBridgeContract.address, true);
+                                } else if (fromChainId === 8217) {
+                                    contract.setApprovalForAll(KlaytnGaiaNFTBridgeContract.address, true);
+                                }
+                                this.getApprove(fromChainId);
                             }
                         }),
                         el("button", "Transfer\n전송하기", {
-                            click: () => { }
+                            click: () => {
+                                const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                                this.send(
+                                    nftName,
+                                    Contracts[this.fromForm.chainId][nftName].address,
+                                    this.selectedIds,
+                                );
+                            },
                         }),
                     ),
                 ),
@@ -126,7 +146,7 @@ export default class Swaper extends DomNode {
             el("section.history-container",
                 el(".title", "전송 이력"),
                 el("p", "트랜잭션이 한번 시작되면 되돌릴 수 없습니다.\nTransfer후 Claim 까지 완료되어야 체인 간 전송이 완료됩니다"),
-                this.sendedList = el("table",
+                el("table",
                     el("thead",
                         el("tr",
                             el("td", "From Chain"),
@@ -137,16 +157,20 @@ export default class Swaper extends DomNode {
                             el("td", "Status"),
                         ),
                     ),
+                    this.sendedList = el("tbody"),
                 ),
             ),
         );
 
-        this.getApprove(1);
+        if (savedFromChainId !== undefined) {
+            this.getApprove(savedFromChainId);
+        }
 
         this.fromForm.on("changeChain", (chainId: number, originChainId: number) => {
             if (this.toForm.chainId === chainId) {
                 this.toForm.changeChain(originChainId);
             }
+            this.getApprove(chainId);
             this.loadHistory();
 
             this.store.set("from", this.fromForm.chainId);
@@ -166,7 +190,7 @@ export default class Swaper extends DomNode {
         this.fromForm.on("load", (tokenIds: number[]) => {
             this.nftList.empty();
             this.selectedIds = [];
-            const name = this.store.get<string>("nft")?.toLowerCase();
+            const name = (this.store.get<string>("nft") ?? "GENESIS").toLowerCase();
             for (const tokenId of tokenIds) {
                 const item = new NftItem(name === undefined ? "genesis" : name, tokenId).appendTo(this.nftList);
                 item.on("selected", () => {
@@ -194,8 +218,31 @@ export default class Swaper extends DomNode {
         return parts.join(".");
     }
 
-    private async getApprove(amount: BigNumberish) {
+    private async getApprove(chainId: number) {
         const owner = await EthereumWallet.loadAddress();
+        if (chainId === 1) {
+            const owner = await EthereumWallet.loadAddress();
+            if (owner !== undefined) {
+                /*if ((await APMCoinContract.allowance(owner, APMReservoirContract.address)).lt(1)) {
+                    this.approveButton.domElement.disabled = false;
+                    this.transferButton.domElement.disabled = true;
+                } else {
+                    this.approveButton.domElement.disabled = true;
+                    this.transferButton.domElement.disabled = false;
+                }*/
+            }
+        } else if (chainId === 8217) {
+            const owner = await KlaytnWallet.loadAddress();
+            if (owner !== undefined) {
+                /*if ((await KAPMContract.allowance(owner, KAPMReservoirContract.address)).lt(1)) {
+                    this.approveButton.domElement.disabled = false;
+                    this.transferButton.domElement.disabled = true;
+                } else {
+                    this.approveButton.domElement.disabled = true;
+                    this.transferButton.domElement.disabled = false;
+                }*/
+            }
+        }
     }
 
     private async loadHistory() {
@@ -209,24 +256,29 @@ export default class Swaper extends DomNode {
             const sender = await this.fromForm.sender.loadAddress();
             const receiver = await this.toForm.sender.loadAddress();
             if (sender !== undefined && receiver !== undefined) {
-                /*const count = await this.fromForm.sender.sendingCounts(
+                const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                const contract = Contracts[this.fromForm.chainId][nftName];
+                const sended = await this.fromForm.sender.loadSended(
                     sender,
                     this.toForm.chainId,
                     receiver,
+                    nftName,
+                    contract.address,
                 );
+
                 this.loadHistoryNonce += 1;
                 const nonce = this.loadHistoryNonce;
 
-                SkyUtil.repeatResultAsync(count.toNumber(), async (sendingId) => {
+                for (const data of sended) {
                     if (this.loadHistoryNonce === nonce) {
-                        this.addSended(sender, receiver, BigNumber.from(sendingId));
+                        this.addSended(sender, receiver, data.sendingId, data.ids);
                     }
-                });*/
+                }
             }
         }
     }
 
-    public addSended(sender: string, receiver: string, sendingId: BigNumber) {
+    public addSended(sender: string, receiver: string, sendingId: BigNumber, ids: BigNumber[]) {
         if (
             this.fromForm.sender !== undefined &&
             this.toForm.sender !== undefined
@@ -239,21 +291,16 @@ export default class Swaper extends DomNode {
                 sender,
                 receiver,
                 sendingId.toNumber(),
+                ids,
                 async () => {
                     if (this.fromForm.sender !== undefined) {
-                        /*const sended = await this.fromForm.sender.sendedAmounts(
-                            sender,
-                            this.toForm.chainId,
-                            receiver,
-                            sendingId,
-                        );
                         this.receive(
                             sender,
-                            this.toForm.chainId,
+                            BigNumber.from(this.toForm.chainId),
                             receiver,
+                            ids,
                             sendingId,
-                            sended,
-                        );*/
+                        );
                     }
                 }
             ).appendTo(this.sendedList, 0);
@@ -280,10 +327,10 @@ export default class Swaper extends DomNode {
 
     public async receive(
         sender: string,
-        toChainId: BigNumberish,
+        toChainId: BigNumber,
         _receiver: string,
+        ids: BigNumber[],
         sendingId: BigNumber,
-        amount: BigNumberish
     ) {
         if (
             this.fromForm.sender !== undefined &&
@@ -293,6 +340,30 @@ export default class Swaper extends DomNode {
             const receiver = await this.toForm.sender.loadAddress();
             if (receiver === _receiver) {
                 try {
+
+                    const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                    const contract = Contracts[this.toForm.chainId][nftName];
+
+                    const params = new URLSearchParams();
+                    params.set("fromChainId", String(this.fromForm.chainId));
+                    params.set("toChainId", String(this.toForm.chainId));
+                    params.set("sender", sender);
+                    params.set("receiver", receiver);
+                    params.set("nftName", nftName);
+                    params.set("nftAddress", contract.address);
+                    params.set("ids", ids.join(","));
+                    params.set("sendingId", String(sendingId));
+
+                    const result = await fetch(`${Config.apiURI}/gaia-protocol-pfp/signsend?${params.toString()}`);
+                    const data = await result.json();
+
+                    if (data.confirming === true) {
+                        alert("이더리움 Block Confirm을 기다리는 중입니다.");
+                        return;
+                    }
+
+                    await this.toForm.sender.receiveNFTs(sender, this.fromForm.chainId, receiver, nftName, contract.address, ids, sendingId, data.signedMessage);
+
                 } catch (error: any) {
                     alert(`Error: ${error.message}`);
                 }

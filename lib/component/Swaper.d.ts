@@ -13,8 +13,8 @@ export default class Swaper extends DomNode {
     numberWithCommas(x: string, fixed?: number): string;
     private getApprove;
     private loadHistory;
-    addSended(sender: string, receiver: string, sendingId: BigNumber): void;
+    addSended(sender: string, receiver: string, sendingId: BigNumber, ids: BigNumber[]): void;
     send(nftName: string, nftAddress: string, ids: BigNumberish[]): Promise<void>;
-    receive(sender: string, toChainId: BigNumberish, _receiver: string, sendingId: BigNumber, amount: BigNumberish): Promise<void>;
+    receive(sender: string, toChainId: BigNumber, _receiver: string, ids: BigNumber[], sendingId: BigNumber): Promise<void>;
 }
 //# sourceMappingURL=Swaper.d.ts.map

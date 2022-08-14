@@ -1,1 +1,1 @@
-{"version":3,"file":"KlaytnGaiaSupernovaContract.d.ts","sourceRoot":"","sources":["../../src/contract/KlaytnGaiaSupernovaContract.ts"],"names":[],"mappings":""}
+{"version":3,"file":"KlaytnGaiaSupernovaContract.d.ts","sourceRoot":"","sources":["../../src/contract/KlaytnGaiaSupernovaContract.ts"],"names":[],"mappings":"AAKA,OAAO,aAAa,MAAM,iCAAiC,CAAC;AAE5D,cAAM,2BAA4B,SAAQ,aAAa;;YAOrC,KAAK;CAetB;;AAED,wBAAiD"}

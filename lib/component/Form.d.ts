@@ -11,7 +11,6 @@ export default class Form extends DomNode {
     private chainSelect;
     private addressDisplay;
     private buttonContainer;
-    private addresses;
     constructor(swaper: Swaper, chainId: number, nftName: string, isFrom?: boolean);
     changeChain(chainId: number): Promise<void>;
     changeNFT(nftName: string): Promise<void>;
