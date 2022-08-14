@@ -816,21 +816,22 @@ body {
 .swaper > .history-container > table > tbody > tr > td > .status-container > a {
   margin-top: 4px;
 }
-.nft-item {
+.nft-item > .content {
   display: flex;
   position: relative;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
+  cursor: pointer;
   margin-bottom: 16px;
 }
-.nft-item > img {
+.nft-item > .content > img {
   border-radius: 8px;
   max-width: 256px;
   width: 100%;
   height: auto;
 }
-.nft-item > .checkbox-container {
+.nft-item > .content > .checkbox-container {
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -842,14 +843,14 @@ body {
   border-radius: 16px;
   background-color: #25262c;
 }
-.nft-item > .checkbox-container input[type=checkbox] {
+.nft-item > .content > .checkbox-container input[type=checkbox] {
   display: none;
 }
-.nft-item > .checkbox-container > input[type=checkbox] + label {
+.nft-item > .content > .checkbox-container > input[type=checkbox] + label {
   display: block;
   cursor: pointer;
 }
-.nft-item > .checkbox-container input[type=checkbox] + label:before {
+.nft-item > .content > .checkbox-container input[type=checkbox] + label:before {
   content: "✓";
   margin-bottom: 4px;
   display: inline-block;
@@ -862,15 +863,15 @@ body {
   color: transparent;
   transition: 0.2s;
 }
-.nft-item > .checkbox-container input[type=checkbox] + label:active:before {
+.nft-item > .content > .checkbox-container input[type=checkbox] + label:active:before {
   transform: scale(0);
 }
-.nft-item > .checkbox-container input[type=checkbox]:checked + label:before {
+.nft-item > .content > .checkbox-container input[type=checkbox]:checked + label:before {
   background-color: #B19C76;
   border-color: #B19C76;
   color: #131313;
 }
-.nft-item > .checkbox-container > p {
+.nft-item > .content > .checkbox-container > p {
   font-weight: 500;
   color: white;
   padding-left: 8px;
