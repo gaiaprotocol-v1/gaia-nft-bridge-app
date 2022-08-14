@@ -5,15 +5,16 @@ export default class Form extends DomNode {
     private swaper;
     chainId: number;
     private nftName;
-    private nftAddress;
     private isFrom;
     sender: GaiaNFTBridgeInterface | undefined;
     private chainIcon;
     private chainSelect;
     private addressDisplay;
     private buttonContainer;
-    constructor(swaper: Swaper, chainId: number, nftName: string, nftAddress: string, isFrom?: boolean);
+    private addresses;
+    constructor(swaper: Swaper, chainId: number, nftName: string, isFrom?: boolean);
     changeChain(chainId: number): Promise<void>;
+    changeNFT(nftName: string): Promise<void>;
     private loadBalance;
     private connectHandler;
     private transferHandler;

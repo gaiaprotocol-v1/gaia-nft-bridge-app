@@ -1,10 +1,12 @@
 
 import { BigNumber, BigNumberish } from "ethers";
-import { DomNode, el } from "skydapp-browser";
+import { DomNode, el, Store } from "skydapp-browser";
+import { SkyUtil } from "skydapp-common";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import Form from "./Form";
 import NftItem from "./NftItem";
 import Sended from "./Sended";
+import Alert from "./shared/dialogue/Alert";
 
 export default class Swaper extends DomNode {
     private fromForm: Form;
@@ -16,8 +18,15 @@ export default class Swaper extends DomNode {
     //private receivedDisplay: DomNode;
     private approveButton: DomNode<HTMLButtonElement>;
 
+    private store: Store = new Store("store");
+    private selectedIds: number[] = [];
+
     constructor() {
         super(".swaper");
+
+        const savedFromChainId = this.store.get<number>("from");
+        const savedToChainId = this.store.get<number>("to");
+        const savedNFTName = this.store.get<string>("nft");
 
         this.append(
             el("section.swap-container",
@@ -26,24 +35,53 @@ export default class Swaper extends DomNode {
                     el("p", "NFT SWAP")
                 ),
                 el(".form-container",
-                    (this.fromForm = new Form(this, 8217, "GENESIS", "0xe9A10bB97DDb4bCD7677393405B4b769273CeF3c", true)),
+                    (this.fromForm = new Form(this, savedFromChainId === undefined ? 8217 : savedFromChainId, savedNFTName === undefined ? "GENESIS" : savedNFTName, true)),
                     el("a", {
                         click: () => {
-                            // TODO: 누를 시 FROM<->TO 변환
+                            const fromChainId = this.fromForm.chainId;
+                            this.fromForm.changeChain(this.toForm.chainId);
+                            this.toForm.changeChain(fromChainId);
+                            this.getApprove(this.fromForm.chainId);
+
+                            this.loadHistory();
+
+                            this.store.set("from", this.fromForm.chainId);
+                            this.store.set("to", this.toForm.chainId);
                         }
                     },
                         el("img.arrow", { src: "/images/shared/icn/arrow-right.svg", height: "50", alt: "arrow-right" })
                     ),
-                    (this.toForm = new Form(this, 1, "GENESIS", "0xb48E526d935BEe3891222f6aC10A253e31CCaBE1"))
+                    (this.toForm = new Form(this, savedToChainId === undefined ? 1 : savedToChainId, savedNFTName === undefined ? "GENESIS" : savedNFTName))
                 ),
                 el(".amount-container",
                     el(".title-container",
                         el(".title", "NFTs"),
                     ),
                     el(".tab-container",
-                        el("a.genesis", "Genesis"),
-                        el("a.supernova", "Super nova"),
-                        el("a.stable", "Stable DAO"),
+                        el("a.genesis", "Genesis", {
+                            click: () => {
+                                this.fromForm.changeNFT("GENESIS");
+                                this.toForm.changeNFT("GENESIS");
+                                this.loadHistory();
+                                this.store.set("nft", "GENESIS");
+                            },
+                        }),
+                        el("a.supernova", "Super nova", {
+                            click: () => {
+                                this.fromForm.changeNFT("SUPERNOVA");
+                                this.toForm.changeNFT("SUPERNOVA");
+                                this.loadHistory();
+                                this.store.set("nft", "SUPERNOVA");
+                            },
+                        }),
+                        el("a.stable", "Stable DAO", {
+                            click: () => {
+                                this.fromForm.changeNFT("STABLEDAO");
+                                this.toForm.changeNFT("STABLEDAO");
+                                this.loadHistory();
+                                this.store.set("nft", "STABLEDAO");
+                            },
+                        }),
                     ),
                     this.nftList = el(".nft-container"),
                 ),
@@ -110,6 +148,9 @@ export default class Swaper extends DomNode {
                 this.toForm.changeChain(originChainId);
             }
             this.loadHistory();
+
+            this.store.set("from", this.fromForm.chainId);
+            this.store.set("to", this.toForm.chainId);
         });
 
         this.toForm.on("changeChain", (chainId: number, originChainId: number) => {
@@ -117,12 +158,26 @@ export default class Swaper extends DomNode {
                 this.fromForm.changeChain(originChainId);
             }
             this.loadHistory();
+
+            this.store.set("from", this.fromForm.chainId);
+            this.store.set("to", this.toForm.chainId);
         });
 
-        this.fromForm.on("load", (nfts: any) => {
+        this.fromForm.on("load", (tokenIds: number[]) => {
             this.nftList.empty();
-            for (const nft of nfts) {
-                this.nftList.append(new NftItem("genesis", nft.tokenId));
+            this.selectedIds = [];
+            const name = this.store.get<string>("nft")?.toLowerCase();
+            for (const tokenId of tokenIds) {
+                const item = new NftItem(name === undefined ? "genesis" : name, tokenId).appendTo(this.nftList);
+                item.on("selected", () => {
+                    if (this.selectedIds.length === 10) {
+                        new Alert("오류", "최대 10개까지 선택이 가능합니다.");
+                        item.deselect();
+                    } else {
+                        this.selectedIds.push(tokenId);
+                    }
+                });
+                item.on("deselected", () => SkyUtil.pull(this.selectedIds, tokenId));
             }
         });
 

@@ -6,6 +6,8 @@ export default class Swaper extends DomNode {
     private sendedList;
     private nftList;
     private approveButton;
+    private store;
+    private selectedIds;
     constructor();
     private loadHistoryNonce;
     numberWithCommas(x: string, fixed?: number): string;

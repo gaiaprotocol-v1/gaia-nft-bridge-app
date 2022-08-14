@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers";
 import { DomNode, el } from "skydapp-browser";
 import CommonUtil from "../CommonUtil";
+import Config from "../Config";
 import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
 import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
@@ -17,11 +18,28 @@ export default class Form extends DomNode {
     //private disconnectButton: DomNode;
     private buttonContainer: DomNode;
 
+    private addresses: any = {
+        8217: {
+            GENESIS: "0xe9A10bB97DDb4bCD7677393405B4b769273CeF3c",
+            SUPERNOVA: "0x20a33C651373cde978daE404760e853fAE877588",
+            STABLEDAO: "0x5428dB8Fd0063390b3357D78d56f183D6755A446",
+        },
+        1: {
+            GENESIS: "0xb48E526d935BEe3891222f6aC10A253e31CCaBE1",
+            SUPERNOVA: "0xe7df0DcA32eb23F4182055dC6a2053A3fF239315",
+            STABLEDAO: "0xFfFd676Bffd8797f34C2Adc3E808F374CAEe49D8",
+        },
+        137: {
+            GENESIS: "0x9f69C2a06c97fCAAc1E586b30Ea681c43975F052",
+            SUPERNOVA: "0xECFFc91149b8B702dEa6905Ae304A9D36527060F",
+            STABLEDAO: "0xa5f5b6C05a6d48a56E95E4Ce15078008a18BC79B",
+        },
+    };
+
     constructor(
         private swaper: Swaper,
         public chainId: number,
         private nftName: string,
-        private nftAddress: string,
         private isFrom: boolean = false
     ) {
         super("form")
@@ -88,6 +106,11 @@ export default class Form extends DomNode {
         this.sender?.on("SendToken", this.sendHandler);
     }
 
+    public async changeNFT(nftName: string) {
+        this.nftName = nftName;
+        await this.loadBalance();
+    }
+
     private async loadBalance() {
         this.buttonContainer.empty();
 
@@ -98,12 +121,21 @@ export default class Form extends DomNode {
                 this.addressDisplay.empty().appendText(CommonUtil.shortenAddress(owner));
 
                 if (this.isFrom === true) {
+                    let tokenIds: number[] = [];
                     if (this.chainId === 8217) {
-                        const result = await fetch(`https://nft-holder-collector.webplusone.com/nfts/klaytn/${this.nftAddress}/${owner}`);
-                        this.fireEvent("load", await result.json());
+                        const result = await fetch(`https://nft-holder-collector.webplusone.com/nfts/klaytn/${this.addresses[this.chainId][this.nftName]}/${owner}`);
+                        const dataSet = await result.json();
+                        for (const data of dataSet) {
+                            tokenIds.push(data.tokenId);
+                        }
                     } else if (this.chainId === 1) {
-                        //TODO:
+                        const result = await fetch(`${Config.apiURI}/gaia-protocol-pfp/ethereum/${this.nftName === "STABLEDAO" ? "stable-dao" : this.nftName.toLowerCase()}/${owner}`);
+                        const data = await result.json();
+                        for (const asset of data.assets) {
+                            tokenIds.push(asset.token_id);
+                        }
                     }
+                    this.fireEvent("load", tokenIds);
                 }
 
             } else {
