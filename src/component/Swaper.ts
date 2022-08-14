@@ -162,9 +162,7 @@ export default class Swaper extends DomNode {
             ),
         );
 
-        if (savedFromChainId !== undefined) {
-            this.getApprove(savedFromChainId);
-        }
+        this.getApprove(savedFromChainId === undefined ? 8217 : savedFromChainId);
 
         this.fromForm.on("changeChain", (chainId: number, originChainId: number) => {
             if (this.toForm.chainId === chainId) {
