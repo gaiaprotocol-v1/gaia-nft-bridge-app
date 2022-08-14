@@ -2,7 +2,6 @@ import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 import EthereumNetworkProvider from "../ethereum/EthereumNetworkProvider";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import GaiaNFTBridgeArtifact from "./abi/gaia-protocol-pfp-bridge/artifacts/contracts/GaiaNFTBridge.sol/GaiaNFTBridge.json";
-//import APMCoinContract from "./APMCoinContract";
 import EthereumContract from "./EthereumContract";
 import GaiaNFTBridgeInterface from "./GaiaNFTBridgeInterface";
 
@@ -13,8 +12,6 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
             "SendNFTs",
             "ReceiveNFTs",
         ]);
-        //APMCoinContract.toss("Transfer", this);
-        //APMCoinContract.toss("Approval", this);
         EthereumWallet.toss("connect", this);
     }
 
@@ -29,12 +26,8 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
     public async sendNFTs(toChain: BigNumberish, receiver: string, nftName: string, nftAddress: string, ids: BigNumberish[]) {
         const owner = await EthereumWallet.loadAddress();
         if (owner !== undefined) {
-            //if ((await APMCoinContract.allowance(owner, this.address)).lt(amount)) {
-            //    await APMCoinContract.approve(this.address, constants.MaxUint256);
-            //} else {
-            //    const contract = await this.connectAndGetWalletContract();
-            //    await contract?.sendToken(toChain, receiver, amount, data);
-            //}
+            const contract = await this.connectAndGetWalletContract();
+            await contract?.sendNFTs(toChain, receiver, nftName, nftAddress, ids);
         }
     }
 
@@ -57,6 +50,10 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
             }
         }
         return results;
+    }
+
+    public async isNFTsReceived(sender: string, fromChainId: BigNumberish, sendingId: BigNumberish): Promise<boolean> {
+        return await this.contract.isNFTsReceived(sender, fromChainId, sendingId)
     }
 }
 

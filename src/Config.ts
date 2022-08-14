@@ -1,4 +1,4 @@
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 export default DEV_MODE ? {
     apiURI: "https://localhost:1023",

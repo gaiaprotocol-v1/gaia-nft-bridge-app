@@ -27,39 +27,31 @@ export default class Sended extends DomNode {
     ) {
         super("tr");
         this.load();
-        //this.toSender.on("ReceiveToken", this.receiveTokenHandler);
+        this.toSender.on("ReceiveNFTs", this.receiveTokenHandler);
     }
 
     private async load() {
-        //const received = await this.toSender.isTokenReceived(this.sender, this.fromChainId, this.receiver, this.sendingId);
-        const received: boolean = false;
+        const received = await this.toSender.isNFTsReceived(this.sender, this.fromChainId, this.sendingId);
 
         this.empty().append(
             el("td",
                 el(".chain-container",
                     this.fromImage = el("img", { src: "/images/shared/icn/ethereum.svg", alt: "ethereum" }),
-                    this.fromChainText = el("p", `${console.log(this.fromSender)}`),
+                    this.fromChainText = el("p", this.fromChainId === 1 ? "Ethereum" : "Klaytn"),
                 ),
 
             ),
             el("td",
                 el(".chain-container",
                     this.toImage = el("img", { src: "/images/shared/icn/klaytn.svg", alt: "klaytn" }),
-                    this.toChainText = el("p", "Klaytn"),
+                    this.toChainText = el("p", this.fromChainId === 1 ? "Klaytn" : "Ethereum"),
                 ),
             ),
             el("td",
-                el("p", ""),
+                el("p", `${this.ids.length} 개`),
             ),
             el("td",
-                el("p", ""),
-            ),
-            el("td",
-                el("p", "00:00"),
-            ),
-            el("td",
-                (received as any) === true ? el("button", "Done") : el("button", "Retry", {
-                    // "disabled": "",
+                (received as any) === true ? el("button", "Done", { "disabled": "" }) : el("button", "Retry", {
                     click: () => this.retry(),
                 }),
             ),
@@ -99,14 +91,14 @@ export default class Sended extends DomNode {
         return balanceDisplay;
     }
 
-    private receiveTokenHandler = async (receiver: string, fromChain: BigNumber, sender: string, sendId: BigNumber) => {
-        if (receiver === this.receiver && fromChain.toNumber() === this.fromChainId && sender === this.sender && sendId.toNumber() === this.sendingId) {
+    private receiveTokenHandler = async (sender: string, fromChainId: BigNumber, receiver: string, nftName: string, nftAddress: string, ids: BigNumber[], sendingId: BigNumber) => {
+        if (sender === this.sender && fromChainId.toNumber() === this.fromChainId && receiver === this.receiver && sendingId.toNumber() === this.sendingId) {
             this.load();
         }
     }
 
     public delete() {
-        this.toSender.off("ReceiveToken", this.receiveTokenHandler);
+        this.toSender.off("ReceiveNFTs", this.receiveTokenHandler);
         super.delete();
     }
 }

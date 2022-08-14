@@ -1,5 +1,6 @@
 import { BigNumber, BigNumberish } from "ethers";
 export default interface GaiaNFTBridgeInterface {
+    address: string;
     on(eventName: string, eventHandler: any): void;
     off(eventName: string, eventHandler: any): void;
     loadAddress(): Promise<string | undefined>;
@@ -10,5 +11,6 @@ export default interface GaiaNFTBridgeInterface {
         sendingId: BigNumber;
         ids: BigNumber[];
     }[]>;
+    isNFTsReceived(sender: string, fromChainId: BigNumberish, sendingId: BigNumberish): Promise<boolean>;
 }
 //# sourceMappingURL=GaiaNFTBridgeInterface.d.ts.map

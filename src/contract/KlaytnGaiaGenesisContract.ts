@@ -1,8 +1,6 @@
 import { BigNumber } from "ethers";
-import Config from "../Config";
 import Klaytn from "../klaytn/Klaytn";
 import IERC721Artifact from "./abi/gaia-protocol-pfp/artifacts/@openzeppelin/contracts/token/ERC721/IERC721.sol/IERC721.json";
-import ERC721Contract from "./ethereum-standard/ERC721Contract";
 import KIP17Contract from "./klaytn-standard/KIP17Contract";
 
 class KlaytnGaiaGenesisContract extends KIP17Contract {
@@ -14,7 +12,7 @@ class KlaytnGaiaGenesisContract extends KIP17Contract {
 
     private async watch() {
         let prevBlock = await Klaytn.loadBlockNumber();
-        /*setInterval(async () => {
+        setInterval(async () => {
             const currentBlock = await Klaytn.loadBlockNumber();
             const transferEvents = await this.getTransferEvents(prevBlock, currentBlock);
             for (const event of transferEvents) {
@@ -24,8 +22,12 @@ class KlaytnGaiaGenesisContract extends KIP17Contract {
             for (const event of approvalEvents) {
                 this.fireEvent("Approval", event.returnValues[0], event.returnValues[1], BigNumber.from(event.returnValues[2]));
             }
+            const approvalForAllEvents = await this.getApprovalForAllEvents(prevBlock, currentBlock);
+            for (const event of approvalForAllEvents) {
+                this.fireEvent("ApprovalForAll", event.returnValues[0], event.returnValues[1], event.returnValues[2]);
+            }
             prevBlock = currentBlock + 1;
-        }, 2000);*/
+        }, 2000);
     }
 }
 

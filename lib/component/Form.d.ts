@@ -7,6 +7,7 @@ export default class Form extends DomNode {
     private nftName;
     private isFrom;
     sender: GaiaNFTBridgeInterface | undefined;
+    nftContract: any | undefined;
     private chainIcon;
     private chainSelect;
     private addressDisplay;
@@ -17,6 +18,7 @@ export default class Form extends DomNode {
     private loadBalance;
     private connectHandler;
     private transferHandler;
+    private approvalHandler;
     private sendHandler;
     delete(): void;
 }

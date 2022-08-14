@@ -22,6 +22,7 @@ export default class Swaper extends DomNode {
     private nftList: DomNode;
     //private receivedDisplay: DomNode;
     private approveButton: DomNode<HTMLButtonElement>;
+    private transferButton: DomNode<HTMLButtonElement>;
 
     private store: Store = new Store("store");
     private selectedIds: number[] = [];
@@ -69,6 +70,7 @@ export default class Swaper extends DomNode {
                                 this.toForm.changeNFT("GENESIS");
                                 this.loadHistory();
                                 this.store.set("nft", "GENESIS");
+                                this.getApprove(this.fromForm.chainId);
                             },
                         }),
                         el("a.supernova", "Super nova", {
@@ -77,6 +79,7 @@ export default class Swaper extends DomNode {
                                 this.toForm.changeNFT("SUPERNOVA");
                                 this.loadHistory();
                                 this.store.set("nft", "SUPERNOVA");
+                                this.getApprove(this.fromForm.chainId);
                             },
                         }),
                         el("a.stable", "Stable DAO", {
@@ -85,6 +88,7 @@ export default class Swaper extends DomNode {
                                 this.toForm.changeNFT("STABLEDAO");
                                 this.loadHistory();
                                 this.store.set("nft", "STABLEDAO");
+                                this.getApprove(this.fromForm.chainId);
                             },
                         }),
                     ),
@@ -112,30 +116,28 @@ export default class Swaper extends DomNode {
                 el(".warning-container",
                     el(".content",
                         el("img", { src: "/images/shared/icn/warning.png", alt: "warning.svg" }),
-                        el("p", "브릿지 이용 시 양 체인에 가스비가 발생됩니다.\n보내는 체인이 이더리움일 경우 32컨펌 후 Claim 서명이 필요합니다"),
+                        el("p", "브릿지 이용 시 양 체인에 가스비가 발생됩니다."/*"브릿지 이용 시 양 체인에 가스비가 발생됩니다.\n보내는 체인이 이더리움일 경우 32컨펌 후 Claim 서명이 필요합니다"*/),
                     ),
                 ),
                 el(".button-container",
                     el(".content",
                         this.approveButton = el("button", "Approve\nNFT 사용 허가", {
                             click: async () => {
-                                const nftName = this.store.get<string>("nft") ?? "GENESIS";
                                 const fromChainId = this.fromForm.chainId;
-                                const contract = Contracts[fromChainId][nftName];
                                 if (fromChainId === 1) {
-                                    contract.setApprovalForAll(EthereumGaiaNFTBridgeContract.address, true);
+                                    this.fromForm.nftContract.setApprovalForAll(EthereumGaiaNFTBridgeContract.address, true);
                                 } else if (fromChainId === 8217) {
-                                    contract.setApprovalForAll(KlaytnGaiaNFTBridgeContract.address, true);
+                                    this.fromForm.nftContract.setApprovalForAll(KlaytnGaiaNFTBridgeContract.address, true);
                                 }
                                 this.getApprove(fromChainId);
                             }
                         }),
-                        el("button", "Transfer\n전송하기", {
+                        this.transferButton = el("button", "Transfer\n전송하기", {
                             click: () => {
                                 const nftName = this.store.get<string>("nft") ?? "GENESIS";
                                 this.send(
                                     nftName,
-                                    Contracts[this.fromForm.chainId][nftName].address,
+                                    this.fromForm.nftContract.address,
                                     this.selectedIds,
                                 );
                             },
@@ -151,9 +153,7 @@ export default class Swaper extends DomNode {
                         el("tr",
                             el("td", "From Chain"),
                             el("td", "To Chain"),
-                            el("td", "Name"),
-                            el("td", "Fee"),
-                            el("td", "Time"),
+                            el("td", "개수"),
                             el("td", "Status"),
                         ),
                     ),
@@ -208,6 +208,7 @@ export default class Swaper extends DomNode {
         this.loadHistory();
         this.fromForm.on("connect", () => this.loadHistory());
         this.toForm.on("connect", () => this.loadHistory());
+        this.fromForm.on("approved", () => this.getApprove(this.fromForm.chainId));
     }
 
     private loadHistoryNonce = 0;
@@ -219,35 +220,37 @@ export default class Swaper extends DomNode {
     }
 
     private async getApprove(chainId: number) {
-        const owner = await EthereumWallet.loadAddress();
+
+        const nftName = this.store.get<string>("nft") ?? "GENESIS";
+        const contract = Contracts[chainId][nftName];
+
         if (chainId === 1) {
             const owner = await EthereumWallet.loadAddress();
             if (owner !== undefined) {
-                /*if ((await APMCoinContract.allowance(owner, APMReservoirContract.address)).lt(1)) {
+                if (await contract.isApprovedForAll(owner, EthereumGaiaNFTBridgeContract.address) !== true) {
                     this.approveButton.domElement.disabled = false;
                     this.transferButton.domElement.disabled = true;
                 } else {
                     this.approveButton.domElement.disabled = true;
                     this.transferButton.domElement.disabled = false;
-                }*/
+                }
             }
         } else if (chainId === 8217) {
             const owner = await KlaytnWallet.loadAddress();
             if (owner !== undefined) {
-                /*if ((await KAPMContract.allowance(owner, KAPMReservoirContract.address)).lt(1)) {
+                if (await contract.isApprovedForAll(owner, KlaytnGaiaNFTBridgeContract.address) !== true) {
                     this.approveButton.domElement.disabled = false;
                     this.transferButton.domElement.disabled = true;
                 } else {
                     this.approveButton.domElement.disabled = true;
                     this.transferButton.domElement.disabled = false;
-                }*/
+                }
             }
         }
     }
 
     private async loadHistory() {
-        const owner = await this.fromForm.sender!.loadAddress();
-        //const balance = await this.fromForm.sender!.balanceOf(owner!);
+        this.sendedList.empty();
 
         if (
             this.fromForm.sender !== undefined &&
@@ -257,13 +260,12 @@ export default class Swaper extends DomNode {
             const receiver = await this.toForm.sender.loadAddress();
             if (sender !== undefined && receiver !== undefined) {
                 const nftName = this.store.get<string>("nft") ?? "GENESIS";
-                const contract = Contracts[this.fromForm.chainId][nftName];
                 const sended = await this.fromForm.sender.loadSended(
                     sender,
                     this.toForm.chainId,
                     receiver,
                     nftName,
-                    contract.address,
+                    this.fromForm.nftContract.address,
                 );
 
                 this.loadHistoryNonce += 1;
@@ -342,7 +344,6 @@ export default class Swaper extends DomNode {
                 try {
 
                     const nftName = this.store.get<string>("nft") ?? "GENESIS";
-                    const contract = Contracts[this.toForm.chainId][nftName];
 
                     const params = new URLSearchParams();
                     params.set("fromChainId", String(this.fromForm.chainId));
@@ -350,7 +351,7 @@ export default class Swaper extends DomNode {
                     params.set("sender", sender);
                     params.set("receiver", receiver);
                     params.set("nftName", nftName);
-                    params.set("nftAddress", contract.address);
+                    params.set("nftAddress", this.toForm.nftContract.address);
                     params.set("ids", ids.join(","));
                     params.set("sendingId", String(sendingId));
 
@@ -362,7 +363,7 @@ export default class Swaper extends DomNode {
                         return;
                     }
 
-                    await this.toForm.sender.receiveNFTs(sender, this.fromForm.chainId, receiver, nftName, contract.address, ids, sendingId, data.signedMessage);
+                    await this.toForm.sender.receiveNFTs(sender, this.fromForm.chainId, receiver, nftName, this.toForm.nftContract.address, ids, sendingId, data.signedMessage);
 
                 } catch (error: any) {
                     alert(`Error: ${error.message}`);

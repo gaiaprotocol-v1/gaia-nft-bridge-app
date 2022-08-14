@@ -35,4 +35,28 @@ export default class KIP17Contract extends KlaytnContract {
     public async tokenOfOwnerByIndex(owner: string, index: BigNumberish): Promise<BigNumber> {
         return BigNumber.from(await this.runMethod("tokenOfOwnerByIndex", owner, index));
     }
+
+    public async getTransferEvents(startBlock: number, endBlock: number) {
+        const events = await this.contract.getPastEvents("Transfer", {
+            fromBlock: startBlock,
+            toBlock: endBlock,
+        });
+        return events;
+    }
+
+    public async getApprovalEvents(startBlock: number, endBlock: number) {
+        const events = await this.contract.getPastEvents("Approval", {
+            fromBlock: startBlock,
+            toBlock: endBlock,
+        });
+        return events;
+    }
+
+    public async getApprovalForAllEvents(startBlock: number, endBlock: number) {
+        const events = await this.contract.getPastEvents("ApprovalForAll", {
+            fromBlock: startBlock,
+            toBlock: endBlock,
+        });
+        return events;
+    }
 }

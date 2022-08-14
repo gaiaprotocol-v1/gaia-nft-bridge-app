@@ -14,6 +14,7 @@ declare class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements Gaia
         sendingId: BigNumber;
         ids: BigNumber[];
     }[]>;
+    isNFTsReceived(sender: string, fromChainId: BigNumberish, sendingId: BigNumberish): Promise<boolean>;
 }
 declare const _default: KlaytnGaiaNFTBridgeContract;
 export default _default;

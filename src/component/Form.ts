@@ -12,6 +12,7 @@ import Swaper from "./Swaper";
 
 export default class Form extends DomNode {
     public sender: GaiaNFTBridgeInterface | undefined;
+    public nftContract: any | undefined;
 
     private chainIcon: DomNode<HTMLImageElement>;
     private chainSelect: DomNode<HTMLSelectElement>;
@@ -58,8 +59,11 @@ export default class Form extends DomNode {
         this.chainSelect.domElement.value = String(chainId);
 
         this.sender?.off("connect", this.connectHandler);
-        this.sender?.off("Transfer", this.transferHandler);
-        this.sender?.off("SendToken", this.sendHandler);
+        this.sender?.off("SendNFTs", this.sendHandler);
+
+        this.nftContract?.off("Transfer", this.transferHandler);
+        this.nftContract?.off("ApprovalForAll", this.approvalHandler);
+        this.nftContract = Contracts[this.chainId][this.nftName];
 
         if (chainId === 8217) {
             this.sender = KlaytnGaiaNFTBridgeContract;
@@ -85,12 +89,19 @@ export default class Form extends DomNode {
         await this.loadBalance();
 
         this.sender?.on("connect", this.connectHandler);
-        this.sender?.on("Transfer", this.transferHandler);
         this.sender?.on("SendNFTs", this.sendHandler);
+
+        this.nftContract?.on("Transfer", this.transferHandler);
+        this.nftContract?.on("ApprovalForAll", this.approvalHandler);
     }
 
     public async changeNFT(nftName: string) {
         this.nftName = nftName;
+        this.nftContract?.off("Transfer", this.transferHandler);
+        this.nftContract?.off("ApprovalForAll", this.approvalHandler);
+        this.nftContract = Contracts[this.chainId][nftName];
+        this.nftContract?.on("Transfer", this.transferHandler);
+        this.nftContract?.on("ApprovalForAll", this.approvalHandler);
         await this.loadBalance();
     }
 
@@ -140,7 +151,14 @@ export default class Form extends DomNode {
     private transferHandler = async (from: string, to: string) => {
         const owner = await this.sender?.loadAddress();
         if (from === owner || to === owner) {
-            this.loadBalance();
+            setTimeout(() => this.loadBalance(), 3000);
+        }
+    };
+
+    private approvalHandler = async (from: string, to: string) => {
+        const owner = await this.sender?.loadAddress();
+        if (from === owner && to === this.sender?.address) {
+            this.fireEvent("approved");
         }
     };
 
@@ -148,6 +166,8 @@ export default class Form extends DomNode {
         sender: string,
         toChainId: BigNumber,
         receiver: string,
+        nftName: string,
+        nftAddress: string,
         ids: BigNumber[],
         sendingId: BigNumber,
     ) => {
@@ -160,8 +180,9 @@ export default class Form extends DomNode {
 
     public delete() {
         this.sender?.off("connect", this.connectHandler);
-        this.sender?.off("Transfer", this.transferHandler);
-        this.sender?.off("SendToken", this.sendHandler);
+        this.sender?.off("SendNFTs", this.sendHandler);
+        this.nftContract?.off("Transfer", this.transferHandler);
+        this.nftContract?.off("ApprovalForAll", this.approvalHandler);
         super.delete();
     }
 }

@@ -3,7 +3,6 @@ import Klaytn from "../klaytn/Klaytn";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
 import GaiaNFTBridgeArtifact from "./abi/gaia-protocol-pfp-bridge/artifacts/contracts/GaiaNFTBridge.sol/GaiaNFTBridge.json";
 import GaiaNFTBridgeInterface from "./GaiaNFTBridgeInterface";
-//import KAPMContract from "./KAPMContract";
 import KlaytnContract from "./KlaytnContract";
 
 class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridgeInterface {
@@ -11,8 +10,6 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
     constructor() {
         super("0x3Ac0d778d64C8d7AAbB28cf574B9D5cEbF603764", GaiaNFTBridgeArtifact.abi);
         KlaytnWallet.toss("connect", this);
-        //KAPMContract.toss("Transfer", this);
-        //KAPMContract.toss("Approval", this);
         this.watch();
     }
 
@@ -22,11 +19,11 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
             const currentBlock = await Klaytn.loadBlockNumber();
             const sendEvents = await this.getSendNFTsEvents(prevBlock, currentBlock);
             for (const event of sendEvents) {
-                this.fireEvent("SendNFTs", event.returnValues[0], BigNumber.from(event.returnValues[1]), event.returnValues[2], event.returnValues[3], event.returnValues[4], event.returnValues[5], event.returnValues[6]);
+                this.fireEvent("SendNFTs", event.returnValues[0], BigNumber.from(event.returnValues[1]), event.returnValues[2], event.returnValues[3], event.returnValues[4], event.returnValues[5], BigNumber.from(event.returnValues[6]));
             }
             const receiveTokenEvents = await this.getReceiveNFTsEvents(prevBlock, currentBlock);
             for (const event of receiveTokenEvents) {
-                this.fireEvent("ReceiveNFTs", event.returnValues[0], BigNumber.from(event.returnValues[1]), event.returnValues[2], event.returnValues[3], event.returnValues[4], event.returnValues[5], event.returnValues[6]);
+                this.fireEvent("ReceiveNFTs", event.returnValues[0], BigNumber.from(event.returnValues[1]), event.returnValues[2], event.returnValues[3], event.returnValues[4], event.returnValues[5], BigNumber.from(event.returnValues[6]));
             }
             prevBlock = currentBlock + 1;
         }, 2000);
@@ -85,6 +82,10 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
             }
         }
         return results;
+    }
+
+    public async isNFTsReceived(sender: string, fromChainId: BigNumberish, sendingId: BigNumberish): Promise<boolean> {
+        return await this.runMethod("isNFTsReceived", sender, fromChainId, sendingId);
     }
 }
 

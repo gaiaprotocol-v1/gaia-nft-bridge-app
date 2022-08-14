@@ -6,6 +6,7 @@ export default class Swaper extends DomNode {
     private sendedList;
     private nftList;
     private approveButton;
+    private transferButton;
     private store;
     private selectedIds;
     constructor();

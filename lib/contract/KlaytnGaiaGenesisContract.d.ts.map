@@ -1,1 +1,1 @@
-{"version":3,"file":"KlaytnGaiaGenesisContract.d.ts","sourceRoot":"","sources":["../../src/contract/KlaytnGaiaGenesisContract.ts"],"names":[],"mappings":"AAKA,OAAO,aAAa,MAAM,iCAAiC,CAAC;AAE5D,cAAM,yBAA0B,SAAQ,aAAa;;YAOnC,KAAK;CAetB;;AAED,wBAA+C"}
+{"version":3,"file":"KlaytnGaiaGenesisContract.d.ts","sourceRoot":"","sources":["../../src/contract/KlaytnGaiaGenesisContract.ts"],"names":[],"mappings":"AAGA,OAAO,aAAa,MAAM,iCAAiC,CAAC;AAE5D,cAAM,yBAA0B,SAAQ,aAAa;;YAOnC,KAAK;CAmBtB;;AAED,wBAA+C"}
