@@ -1,5 +1,7 @@
 import { EventContainer } from "skydapp-common";
+import ConnectWalletPopup from "../component/shared/ConnectWalletPopup";
 import Kaikas from "./Kaikas";
+import Klip from "./Klip";
 
 class KlaytnWallet extends EventContainer {
 
@@ -8,6 +10,7 @@ class KlaytnWallet extends EventContainer {
         this.checkConnected();
 
         Kaikas.toss("connect", this);
+        Klip.toss("connect", this);
     }
 
     private async checkConnected() {
@@ -19,6 +22,8 @@ class KlaytnWallet extends EventContainer {
     public async loadAddress(): Promise<string | undefined> {
         if (Kaikas.installed === true) {
             return await Kaikas.loadAddress();
+        } else {
+            return Klip.address;
         }
     }
 
@@ -30,7 +35,7 @@ class KlaytnWallet extends EventContainer {
         if (Kaikas.installed === true) {
             return await Kaikas.connect();
         } else {
-            alert("카이카스가 필요합니다. 카이카스를 설치해주시기 바랍니다.");
+            return new Promise<void>((resolve) => new ConnectWalletPopup(resolve));
         }
     }
 
@@ -40,6 +45,8 @@ class KlaytnWallet extends EventContainer {
     public async loadChainId() {
         if (Kaikas.installed === true) {
             return await Kaikas.loadChainId();
+        } else {
+            return 8127;
         }
     }
 

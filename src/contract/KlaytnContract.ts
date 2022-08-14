@@ -1,8 +1,10 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { EventContainer } from "skydapp-common";
+import ConnectWalletPopup from "../component/shared/ConnectWalletPopup";
 import ExtWallet from "../klaytn/Kaikas";
 import Klaytn from "../klaytn/Klaytn";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
+import Klip from "../klaytn/Klip";
 
 export default abstract class KlaytnContract extends EventContainer {
 
@@ -42,8 +44,10 @@ export default abstract class KlaytnContract extends EventContainer {
             const from = await KlaytnWallet.loadAddress();
             const contract = await this.loadExtWalletContract();
             await contract?.methods[methodName](...params).send({ from, gas });
+        } else if (Klip.connected === true) {
+            await Klip.runContractMethod(this.address, this.findMethodABI(methodName), params);
         } else {
-            alert("카이카스가 필요합니다. 카이카스를 설치해주시기 바랍니다.");
+            return new Promise<void>((resolve) => new ConnectWalletPopup(resolve));
         }
     }
 
@@ -60,8 +64,10 @@ export default abstract class KlaytnContract extends EventContainer {
             const from = await KlaytnWallet.loadAddress();
             const contract = await this.loadExtWalletContract();
             await contract?.methods[methodName](...params).send({ from, gas: 1500000, value });
+        } else if (Klip.connected === true) {
+            await Klip.runContractMethod(this.address, this.findMethodABI(methodName), params, value.toString());
         } else {
-            alert("카이카스가 필요합니다. 카이카스를 설치해주시기 바랍니다.");
+            return new Promise<void>((resolve) => new ConnectWalletPopup(resolve));
         }
     }
 }
