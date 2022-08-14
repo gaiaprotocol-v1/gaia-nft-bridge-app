@@ -78,8 +78,7 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
                 for (const id of event.returnValues[5]) {
                     ids.push(BigNumber.from(id));
                 }
-                console.log(event.block);
-                results.push({ block: event.block, sendingId: BigNumber.from(event.returnValues[6]), ids });
+                results.push({ block: event.blockNumber, sendingId: BigNumber.from(event.returnValues[6]), ids });
             }
         }
         return results;

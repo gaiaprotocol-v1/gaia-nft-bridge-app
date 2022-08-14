@@ -208,7 +208,10 @@ export default class Swaper extends DomNode {
         });
 
         this.loadHistory();
-        this.fromForm.on("connect", () => this.loadHistory());
+        this.fromForm.on("connect", () => {
+            this.getApprove(savedFromChainId === undefined ? 8217 : savedFromChainId);
+            this.loadHistory();
+        });
         this.toForm.on("connect", () => this.loadHistory());
         this.fromForm.on("approved", () => this.getApprove(this.fromForm.chainId));
     }
