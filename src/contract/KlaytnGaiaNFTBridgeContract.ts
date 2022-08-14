@@ -61,14 +61,14 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
         await this.runWalletMethod("receiveNFTs", sender, fromChain, receiver, nftName, nftAddress, ids, sendingId, sig);
     }
 
-    public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ sendingId: BigNumber, ids: BigNumber[] }[]> {
+    public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ block: number, sendingId: BigNumber, ids: BigNumber[] }[]> {
         const currentBlock = await Klaytn.loadBlockNumber();
         const events = await this.contract.getPastEvents("SendNFTs", {
             filter: { sender, toChainId, receiver },
             fromBlock: currentBlock - 75000,
             toBlock: currentBlock,
         });
-        const results: { sendingId: BigNumber, ids: BigNumber[] }[] = [];
+        const results: { block: number, sendingId: BigNumber, ids: BigNumber[] }[] = [];
         for (const event of events) {
             if (
                 event.returnValues[3] === nftName &&
@@ -78,7 +78,8 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
                 for (const id of event.returnValues[5]) {
                     ids.push(BigNumber.from(id));
                 }
-                results.push({ sendingId: BigNumber.from(event.returnValues[6]), ids });
+                console.log(event.block);
+                results.push({ block: event.block, sendingId: BigNumber.from(event.returnValues[6]), ids });
             }
         }
         return results;

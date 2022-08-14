@@ -275,14 +275,14 @@ export default class Swaper extends DomNode {
 
                 for (const data of sended) {
                     if (this.loadHistoryNonce === nonce) {
-                        this.addSended(sender, receiver, data.sendingId, data.ids);
+                        this.addSended(sender, receiver, data.sendingId, data.ids, data.block);
                     }
                 }
             }
         }
     }
 
-    public addSended(sender: string, receiver: string, sendingId: BigNumber, ids: BigNumber[]) {
+    public addSended(sender: string, receiver: string, sendingId: BigNumber, ids: BigNumber[], block?: number) {
         if (
             this.fromForm.sender !== undefined &&
             this.toForm.sender !== undefined
@@ -304,6 +304,7 @@ export default class Swaper extends DomNode {
                             receiver,
                             ids,
                             sendingId,
+                            block,
                         );
                     }
                 }
@@ -335,6 +336,7 @@ export default class Swaper extends DomNode {
         _receiver: string,
         ids: BigNumber[],
         sendingId: BigNumber,
+        block?: number,
     ) {
         if (
             this.fromForm.sender !== undefined &&
@@ -348,6 +350,9 @@ export default class Swaper extends DomNode {
                     const nftName = this.store.get<string>("nft") ?? "GENESIS";
 
                     const params = new URLSearchParams();
+                    if (block !== undefined) {
+                        params.set("block", String(block));
+                    }
                     params.set("fromChainId", String(this.fromForm.chainId));
                     params.set("toChainId", String(this.toForm.chainId));
                     params.set("sender", sender);
