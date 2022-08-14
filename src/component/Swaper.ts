@@ -134,12 +134,16 @@ export default class Swaper extends DomNode {
                         }),
                         this.transferButton = el("button", "Transfer\n전송하기", {
                             click: () => {
-                                const nftName = this.store.get<string>("nft") ?? "GENESIS";
-                                this.send(
-                                    nftName,
-                                    this.fromForm.nftContract.address,
-                                    this.selectedIds,
-                                );
+                                if (this.selectedIds.length === 0) {
+                                    new Alert("오류", "선택된 NFT가 없습니다.");
+                                } else {
+                                    const nftName = this.store.get<string>("nft") ?? "GENESIS";
+                                    this.send(
+                                        nftName,
+                                        this.fromForm.nftContract.address,
+                                        this.selectedIds,
+                                    );
+                                }
                             },
                         }),
                     ),
