@@ -1,6 +1,7 @@
 import { BigNumber, utils } from "ethers";
 import { DomNode, el } from "skydapp-browser";
 import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
+import Alert from "./shared/dialogue/Alert";
 
 export default class Sended extends DomNode {
 
@@ -93,6 +94,7 @@ export default class Sended extends DomNode {
 
     private receiveTokenHandler = async (sender: string, fromChainId: BigNumber, receiver: string, nftName: string, nftAddress: string, ids: BigNumber[], sendingId: BigNumber) => {
         if (sender === this.sender && fromChainId.toNumber() === this.fromChainId && receiver === this.receiver && sendingId.toNumber() === this.sendingId) {
+            new Alert("전송 완료", "전송이 완료됐습니다.");
             this.load();
         }
     }
