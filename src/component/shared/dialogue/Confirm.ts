@@ -13,7 +13,7 @@ export default class Confirm extends Popup {
         super(".popup-background");
         this.append(
             this.content = el(".dialogue.confirm",
-                el("h2", title),
+                el("h6", title),
                 el("p", message),
                 el(".button-container",
                     el("button", msg("CANCEL_BUTTON"), {

@@ -12,7 +12,7 @@ export default class Alert extends Popup {
         super(".popup-background");
         this.append(
             this.content = el(".dialogue.alert",
-                el("h2", title),
+                el("h6", title),
                 el("p", message),
                 el(".button-container",
                     el("button", confirmTitle === undefined ? msg("CONFIRM_BUTTON") : confirmTitle, {

@@ -1,5 +1,7 @@
 import { DomNode, el } from "skydapp-browser";
 import { View, ViewParams } from "skydapp-common";
+import Alert from "../component/shared/dialogue/Alert";
+import Confirm from "../component/shared/dialogue/Confirm";
 import Swaper from "../component/Swaper";
 import Layout from "./Layout";
 

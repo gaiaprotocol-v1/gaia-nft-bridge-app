@@ -15,7 +15,7 @@ export default class Prompt extends Popup {
         super(".popup-background");
         this.append(
             this.content = el(".dialogue.prompt",
-                el("h2", title),
+                el("h6", title),
                 el("p", message),
                 el(".input-container",
                     this.input = el("input", { placeholder: placeholder }),
