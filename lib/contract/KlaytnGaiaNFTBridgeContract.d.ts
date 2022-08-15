@@ -4,7 +4,7 @@ import KlaytnContract from "./KlaytnContract";
 declare class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridgeInterface {
     constructor();
     private watch;
-    private getSendNFTsEvents;
+    getSendNFTsEvents(startBlock: number, endBlock: number): Promise<any>;
     private getReceiveNFTsEvents;
     loadAddress(): Promise<string | undefined>;
     connect(): Promise<void>;

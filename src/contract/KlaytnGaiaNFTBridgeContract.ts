@@ -29,7 +29,7 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
         }, 2000);
     }
 
-    private async getSendNFTsEvents(startBlock: number, endBlock: number) {
+    public async getSendNFTsEvents(startBlock: number, endBlock: number) {
         const events = await this.contract.getPastEvents("SendNFTs", {
             fromBlock: startBlock,
             toBlock: endBlock,
