@@ -2,6 +2,9 @@
 import { BigNumber, BigNumberish } from "ethers";
 import { DomNode, el, Store } from "skydapp-browser";
 import { SkyUtil } from "skydapp-common";
+import NftItem from "../component/NftItem";
+import Alert from "../component/shared/dialogue/Alert";
+import Confirm from "../component/shared/dialogue/Confirm";
 import Config from "../Config";
 import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
 import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
@@ -9,10 +12,7 @@ import Contracts from "../Contracts";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
 import TestForm from "./TestForm";
-import NftItem from "../component/NftItem";
-import Sended from "../component/Sended";
-import Alert from "../component/shared/dialogue/Alert";
-import Confirm from "../component/shared/dialogue/Confirm";
+import TestSended from "./TestSended";
 
 export default class TestSwaper extends DomNode {
     private fromForm: TestForm;
@@ -293,7 +293,7 @@ export default class TestSwaper extends DomNode {
             this.fromForm.sender !== undefined &&
             this.toForm.sender !== undefined
         ) {
-            new Sended(
+            new TestSended(
                 this.fromForm.sender,
                 this.toForm.sender,
                 this.fromForm.chainId,
