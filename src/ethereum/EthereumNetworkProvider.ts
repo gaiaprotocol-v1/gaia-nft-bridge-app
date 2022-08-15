@@ -14,7 +14,7 @@ class EthereumNetworkProvider extends EventContainer {
         if (this.existsInjectedProvider === true) {
             this.provider = new ethers.providers.Web3Provider(this.ethereum);
         } else {
-            this.provider = new ethers.providers.JsonRpcProvider("https://cloudflare-eth.com");
+            this.provider = new ethers.providers.WebSocketProvider("wss://mainnet.infura.io/ws/v3/4d08e8ac01134ac0abe286403de9e9ac");
         }
         this.signer = this.provider.getSigner(ethers.constants.AddressZero);
     }
