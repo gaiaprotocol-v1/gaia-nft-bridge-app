@@ -39,7 +39,7 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
     public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ block: number, sendingId: BigNumber, ids: BigNumber[] }[]> {
         const filter = this.contract.filters.SendNFTs(sender, toChainId, receiver);
         const currentBlock = await EthereumNetworkProvider.getBlockNumber();
-        const events = await this.contract.queryFilter(filter, currentBlock - 5000, currentBlock);
+        const events = await this.contract.queryFilter(filter, currentBlock - 75000, currentBlock);
         const results: { block: number, sendingId: BigNumber, ids: BigNumber[] }[] = [];
         for (const event of events) {
             if (
