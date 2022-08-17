@@ -46,7 +46,7 @@ class EthereumGaiaNFTBridgeContract extends EthereumContract<any> implements Gai
                 event.args.nftName === nftName &&
                 event.args.nftAddress === nftAddress
             ) {
-                results.push({ block: event.block, sendingId: event.args.sendingId, ids: event.args.ids });
+                results.push({ block: event.blockNumber, sendingId: event.args.sendingId, ids: event.args.ids });
             }
         }
         return results;
