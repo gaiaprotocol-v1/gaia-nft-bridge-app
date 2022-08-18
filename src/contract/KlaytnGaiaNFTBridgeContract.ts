@@ -65,7 +65,7 @@ class KlaytnGaiaNFTBridgeContract extends KlaytnContract implements GaiaNFTBridg
         const currentBlock = await Klaytn.loadBlockNumber();
         const events = await this.contract.getPastEvents("SendNFTs", {
             filter: { sender, toChainId, receiver },
-            fromBlock: currentBlock - 75000,
+            fromBlock: currentBlock - 400000,
             toBlock: currentBlock,
         });
         const results: { block: number, sendingId: BigNumber, ids: BigNumber[] }[] = [];
