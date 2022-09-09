@@ -18,7 +18,6 @@ export default class Sended extends DomNode {
     constructor(fromSender: GaiaNFTBridgeInterface, toSender: GaiaNFTBridgeInterface, fromChainId: number, toChainId: number, sender: string, receiver: string, sendingId: number, ids: BigNumber[], retry: () => void);
     private load;
     private loadChain;
-    private getFormatting;
     private receiveTokenHandler;
     delete(): void;
 }

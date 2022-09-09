@@ -38,14 +38,14 @@ export default class Sended extends DomNode {
             el("td",
                 el(".chain-container",
                     this.fromImage = el("img", { src: "/images/shared/icn/ethereum.svg", alt: "ethereum" }),
-                    this.fromChainText = el("p", this.fromChainId === 1 ? "Ethereum" : "Klaytn"),
+                    this.fromChainText = el("p", this.fromChainId === 1 ? "Ethereum" : (this.fromChainId === 137 ? "Polygon" : "Klaytn")),
                 ),
 
             ),
             el("td",
                 el(".chain-container",
                     this.toImage = el("img", { src: "/images/shared/icn/klaytn.svg", alt: "klaytn" }),
-                    this.toChainText = el("p", this.fromChainId === 1 ? "Klaytn" : "Ethereum"),
+                    this.toChainText = el("p", this.toChainId === 1 ? "Ethereum" : (this.toChainId === 137 ? "Polygon" : "Klaytn")),
                 ),
             ),
             el("td",
@@ -66,6 +66,11 @@ export default class Sended extends DomNode {
                 this.fromImage.domElement.src = "/images/shared/icn/klaytn.svg";
             }
             this.fromChainText?.empty().appendText("Klaytn");
+        } else if (this.fromChainId === 137) {
+            if (this.fromImage !== undefined) {
+                this.fromImage.domElement.src = "/images/shared/icn/polygon.svg";
+            }
+            this.fromChainText?.empty().appendText("Polygon");
         } else if (this.fromChainId === 1) {
             if (this.fromImage !== undefined) {
                 this.fromImage.domElement.src = "/images/shared/icn/ethereum.svg";
@@ -78,18 +83,17 @@ export default class Sended extends DomNode {
                 this.toImage.domElement.src = "/images/shared/icn/klaytn.svg";
             }
             this.toChainText?.empty().appendText("Klaytn");
+        } else if (this.toChainId === 137) {
+            if (this.toImage !== undefined) {
+                this.toImage.domElement.src = "/images/shared/icn/polygon.svg";
+            }
+            this.toChainText?.empty().appendText("Polygon");
         } else if (this.toChainId === 1) {
             if (this.toImage !== undefined) {
                 this.toImage.domElement.src = "/images/shared/icn/ethereum.svg";
             }
             this.toChainText?.empty().appendText("Ethereum");
         }
-    }
-
-    private async getFormatting(balance: BigNumber) {
-        let balanceDisplay = utils.formatEther(balance!)
-        balanceDisplay = (+balanceDisplay).toFixed(4);
-        return balanceDisplay;
     }
 
     private receiveTokenHandler = async (sender: string, fromChainId: BigNumber, receiver: string, nftName: string, nftAddress: string, ids: BigNumber[], sendingId: BigNumber) => {

@@ -5,9 +5,11 @@ import { SkyUtil } from "skydapp-common";
 import Config from "../Config";
 import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
 import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
+import PolygonGaiaNFTBridgeContract from "../contract/PolygonGaiaNFTBridgeContract";
 import Contracts from "../Contracts";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
+import PolygonWallet from "../polygon/PolygonWallet";
 import Form from "./Form";
 import NftItem from "./NftItem";
 import Sended from "./Sended";
@@ -127,6 +129,8 @@ export default class Swaper extends DomNode {
                                 const fromChainId = this.fromForm.chainId;
                                 if (fromChainId === 1) {
                                     this.fromForm.nftContract.setApprovalForAll(EthereumGaiaNFTBridgeContract.address, true);
+                                } else if (fromChainId === 137) {
+                                    this.fromForm.nftContract.setApprovalForAll(PolygonGaiaNFTBridgeContract.address, true);
                                 } else if (fromChainId === 8217) {
                                     this.fromForm.nftContract.setApprovalForAll(KlaytnGaiaNFTBridgeContract.address, true);
                                 }
@@ -236,6 +240,17 @@ export default class Swaper extends DomNode {
             const owner = await EthereumWallet.loadAddress();
             if (owner !== undefined) {
                 if (await contract.isApprovedForAll(owner, EthereumGaiaNFTBridgeContract.address) !== true) {
+                    this.approveButton.domElement.disabled = false;
+                    this.transferButton.domElement.disabled = true;
+                } else {
+                    this.approveButton.domElement.disabled = true;
+                    this.transferButton.domElement.disabled = false;
+                }
+            }
+        } else if (chainId === 137) {
+            const owner = await PolygonWallet.loadAddress();
+            if (owner !== undefined) {
+                if (await contract.isApprovedForAll(owner, PolygonGaiaNFTBridgeContract.address) !== true) {
                     this.approveButton.domElement.disabled = false;
                     this.transferButton.domElement.disabled = true;
                 } else {

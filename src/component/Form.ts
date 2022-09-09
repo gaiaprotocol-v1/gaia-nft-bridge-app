@@ -5,9 +5,11 @@ import Config from "../Config";
 import EthereumGaiaNFTBridgeContract from "../contract/EthereumGaiaNFTBridgeContract";
 import GaiaNFTBridgeInterface from "../contract/GaiaNFTBridgeInterface";
 import KlaytnGaiaNFTBridgeContract from "../contract/KlaytnGaiaNFTBridgeContract";
+import PolygonGaiaNFTBridgeContract from "../contract/PolygonGaiaNFTBridgeContract";
 import Contracts from "../Contracts";
 import EthereumWallet from "../ethereum/EthereumWallet";
 import KlaytnWallet from "../klaytn/KlaytnWallet";
+import PolygonWallet from "../polygon/PolygonWallet";
 import Swaper from "./Swaper";
 
 export default class Form extends DomNode {
@@ -34,7 +36,7 @@ export default class Form extends DomNode {
             this.chainSelect = el("select",
                 el("option", "Klaytn", { value: "8217" }),
                 el("option", "Ethereum", { value: "1" }),
-                //el("option", "Polygon", { value: "137" }),
+                el("option", "Polygon", { value: "137" }),
                 {
                     change: () => {
                         const originChainId = this.chainId;
@@ -70,6 +72,16 @@ export default class Form extends DomNode {
             this.chainIcon.domElement.src = "/images/shared/icn/klaytn.png";
 
             const address = await KlaytnWallet.loadAddress();
+            if (address !== undefined) {
+                this.addressDisplay.empty().appendText(CommonUtil.shortenAddress(address!));
+            } else {
+                this.addressDisplay.empty();
+            }
+        } else if (chainId === 137) {
+            this.sender = PolygonGaiaNFTBridgeContract;
+            this.chainIcon.domElement.src = "/images/shared/icn/polygon.png";
+
+            const address = await PolygonWallet.loadAddress();
             if (address !== undefined) {
                 this.addressDisplay.empty().appendText(CommonUtil.shortenAddress(address!));
             } else {
@@ -121,6 +133,12 @@ export default class Form extends DomNode {
                         const dataSet = await result.json();
                         for (const data of dataSet) {
                             tokenIds.push(data.tokenId);
+                        }
+                    } else if (this.chainId === 137) {
+                        const result = await fetch(`${Config.apiURI}/gaia-protocol-pfp/polygon/${Contracts[this.chainId][this.nftName].address}/${owner}`);
+                        const data = await result.json();
+                        for (const nft of data.nfts) {
+                            tokenIds.push(nft.token_id);
                         }
                     } else if (this.chainId === 1) {
                         const result = await fetch(`${Config.apiURI}/gaia-protocol-pfp/ethereum/${this.nftName === "STABLEDAO" ? "stable-dao" : this.nftName.toLowerCase()}/${owner}`);
