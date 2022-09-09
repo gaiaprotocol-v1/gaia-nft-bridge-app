@@ -1,8 +1,6 @@
 import { ethers } from "ethers";
 import { EventContainer } from "skydapp-common";
 declare class EthereumNetworkProvider extends EventContainer {
-    private ethereum;
-    private get existsInjectedProvider();
     provider: ethers.providers.JsonRpcProvider;
     signer: ethers.providers.JsonRpcSigner;
     constructor();
