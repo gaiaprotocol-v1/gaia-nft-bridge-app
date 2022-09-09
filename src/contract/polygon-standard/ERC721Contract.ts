@@ -35,6 +35,11 @@ export default abstract class ERC721Contract<CT extends ethers.Contract> extends
     public async isApprovedForAll(owner: string, operator: string): Promise<boolean> {
         return await this.contract.isApprovedForAll(owner, operator);
     }
+    
+    public async setApprovalForAll(operator: string, approved: boolean) {
+        const contract = await this.connectAndGetWalletContract();
+        await contract?.setApprovalForAll(operator, approved);
+    }
 
     public async transfer(to: string, id: BigNumberish) {
         const contract = await this.connectAndGetWalletContract();

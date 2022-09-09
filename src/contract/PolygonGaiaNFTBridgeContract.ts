@@ -8,7 +8,7 @@ import GaiaNFTBridgeInterface from "./GaiaNFTBridgeInterface";
 class PolygonGaiaNFTBridgeContract extends PolygonContract<any> implements GaiaNFTBridgeInterface {
 
     constructor() {
-        super("0xe8C18687E9879094847bD45B3c7373f1241ea86d", GaiaNFTBridgeArtifact.abi, [
+        super("0x1640C880E14F8913bA71644F6812eE58EAeF412F", GaiaNFTBridgeArtifact.abi, [
             "SendNFTs",
             "ReceiveNFTs",
         ]);
@@ -39,7 +39,7 @@ class PolygonGaiaNFTBridgeContract extends PolygonContract<any> implements GaiaN
     public async loadSended(sender: string, toChainId: BigNumberish, receiver: string, nftName: string, nftAddress: string): Promise<{ block: number, sendingId: BigNumber, ids: BigNumber[] }[]> {
         const filter = this.contract.filters.SendNFTs(sender, toChainId, receiver);
         const currentBlock = await PolygonNetworkProvider.getBlockNumber();
-        const events = await this.contract.queryFilter(filter, currentBlock - 75000, currentBlock);
+        const events = await this.contract.queryFilter(filter, currentBlock - 10000, currentBlock);
         const results: { block: number, sendingId: BigNumber, ids: BigNumber[] }[] = [];
         for (const event of events) {
             if (
