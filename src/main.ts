@@ -1,9 +1,10 @@
 import { msg } from "skydapp-browser";
 import { SkyRouter } from "skydapp-common";
 import superagent from "superagent";
+import Admin from "./admin/Admin";
+import Test from "./test/Test";
 import Home from "./view/Home";
 import Layout from "./view/Layout";
-import Test from "./test/Test";
 
 (async () => {
     if (sessionStorage.__spa_path) {
@@ -15,6 +16,7 @@ import Test from "./test/Test";
     SkyRouter.route("**", Layout);
     SkyRouter.route("", Home);
     SkyRouter.route("test", Test);
+    SkyRouter.route("admin", Admin);
 
     /*//TEST
     const currentBlock = await Klaytn.loadBlockNumber();
