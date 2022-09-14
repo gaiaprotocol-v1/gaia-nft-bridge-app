@@ -76,11 +76,6 @@ export default class Sended extends DomNode {
                 this.fromImage.domElement.src = "/images/shared/icn/ethereum.svg";
             }
             this.fromChainText?.empty().appendText("Ethereum");
-        } else if (this.fromChainId === 137) {
-            if (this.fromImage !== undefined) {
-                this.fromImage.domElement.src = "/images/shared/icn/ploygon.png";
-            }
-            this.fromChainText?.empty().appendText("Ploygon");
         }
 
         if (this.toChainId === 8217) {
@@ -98,11 +93,6 @@ export default class Sended extends DomNode {
                 this.toImage.domElement.src = "/images/shared/icn/ethereum.svg";
             }
             this.toChainText?.empty().appendText("Ethereum");
-        } else if (this.fromChainId === 137) {
-            if (this.fromImage !== undefined) {
-                this.fromImage.domElement.src = "/images/shared/icn/ploygon.png";
-            }
-            this.fromChainText?.empty().appendText("Ploygon");
         }
     }
 
